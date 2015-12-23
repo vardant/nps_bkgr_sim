@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/home/vardan/Downloads/GDML_3_1_3/schema/gdml.xsd">
+ <define>
+  <constant name="HALFPI" value="pi/2."/>
+  <constant name="PI" value="1.*pi"/>
+  <constant name="TWOPI" value="2.*pi"/>
+  <position name="center" x="0" y="0" z="0"/>
+  <rotation name="identity" x="0" y="0" z="0" />
+
+  <!-- WORLD SIZE old=400 new=3200. -->
+  <!-- quantity name="wSize" type="length" value="3200.0" unit="cm" -->
+  <quantity name="wSize" type="length" value="3200.0" unit="cm"/>
+  <quantity name="envSize" type="length" value="1." unit="cm"/>
+  <!-- COIL SIZE -->
+  <!-- Sizes and offsets for various Coil Parts -->
+  <quantity name="coil1xSize" type="length" value="7." unit="cm"/>
+  <quantity name="coil1ySize" type="length" value="7." unit="cm"/>
+  <quantity name="coil1zSize" type="length" value="74." unit="cm"/>
+
+  <quantity name="coil2xSize" type="length" value="7." unit="cm"/>
+  <quantity name="coil2ySize" type="length" value="14.0" unit="cm"/>
+  <quantity name="coil2zSize" type="length" value="7." unit="cm"/>
+
+  <position name="coil1Offset" x="0" y="27.0" z="0." unit="cm"/>
+  <position name="coil2Offset" x="0" y="13.5" z="43.5" unit="cm"/>
+  <!-- Coil 90 deg arcs -->
+  <quantity name="arcSize" type="length" value="7.0" unit="cm" />
+  <quantity name="arcRMin" type="length" value="3." unit="cm" />
+  <quantity name="arcRMax" type="length" value="10." unit="cm" />
+  <quantity name="phiS" type="angle" value="0." unit="rad" />
+
+  <position name="arc1Pos" x="0" y="7" z="37" unit="cm"/>
+  <position name="arc2Pos" x="0" y="-7" z="37" unit="cm"/>
+  <position name="arc3Pos" x="0" y="7" z="-37" unit="cm"/>
+  <position name="arc4Pos" x="0" y="-7" z="-37" unit="cm"/>
+
+  <rotation name="arc1Rot" y="90" unit="deg" />
+  <rotation name="flip" x="0" y="180" z="180" unit="deg"/>
+  <!-- Coil Position in world -->
+  <position name="CoilWorldPos1" x="-16.5" y="-13.5" z="0" unit="cm" />
+  <position name="CoilWorldPos2" x="16.5" y="-13.5" z="0" unit="cm" />
+
+  <position name="slot1" x="0.0" y="2.5" z="0" unit="mm"/>
+  <position name="slot2" x="0.0" y="-2.5" z="0" unit="mm"/>
+  <position name="slot3" x="0.0" y="7.5" z="0" unit="mm"/>
+  <position name="slot4" x="0.0" y="-7.5" z="0" unit="mm"/>
+
+ </define>
+
+ <materials>
+  <element name="Hydrogen" formula="H"  Z="1.">  <atom value="1.01"/>   </element>
+  <element name="Oxygen"   formula="O"  Z="8.">  <atom value="16.0"/>   </element>
+  <element name="Nitrogen" formula="N"  Z="7.">  <atom value="14.01"/>  </element>
+  <element name="Lead"     formula="Pb" Z="82."> <atom value="207.20"/> </element>
+  <material name="Al" Z="13.0"> <D value="2.70"/> <atom value="26.98"/> </material>
+  <material name="Vaccuum" Z="1.0"> <D value="1.e-20"/> <atom value="1."/> </material>
+  <material name="Water" formula="H20">
+   <D value="1.0"/>
+   <composite n="2" ref="Hydrogen"/>
+   <composite n="1" ref="Oxygen"/>
+  </material>
+  <material name="Air">
+   <D value="1.290" unit="mg/cm3"/>
+   <fraction n="0.7" ref="Nitrogen"/>
+   <fraction n="0.3" ref="Oxygen"/>
+  </material>
+  <material name="BORON_CONCRETE54" formula="BConc54">
+    <D value="2.45" />
+    <fraction n="0.54" ref="G4_BORON_CARBIDE" />
+    <fraction n="0.46" ref="G4_CONCRETE" />
+  </material>
+  <material name="HeavyMetal" formula="CuW80">
+    <D value="15.56" />
+    <fraction n="0.20" ref="G4_Cu" />
+    <fraction n="0.80" ref="G4_W" />
+  </material>
+  
+ </materials>
+
+ <solids> 
+  <box name="WorldBox" x="wSize" y="wSize" z="wSize"/>
+  <box name="EnvBox" x="envSize" y="envSize" z="envSize"/>
+  <!-- scoring volumes old=150x150x10 cm new=1500x1500x10 cm -->
+  <box name="TopEnv" x="3000." y="10." z="3000" lunit="cm" />
+  <box name="SideEnv" x="10." y="2980." z="3000" lunit="cm" />
+  <box name="FrontEnv" x="3000." y="3000." z="10" lunit="cm" />
+  <box name="coil1part" x="coil1xSize" y="coil1ySize" z="coil1zSize"
+       lunit="cm"/>
+  <box name="coil2part" x="coil2xSize" y="coil2ySize" z="coil2zSize"
+       lunit="cm"/>
+  <tube name="arc1part" z="arcSize" rmin="arcRMin" rmax="arcRMax" startphi="PI" deltaphi="PI/2" aunit="rad" lunit="cm"/>
+  <tube name="arc2part" z="arcSize" rmin="arcRMin" rmax="arcRMax" startphi="1.5*PI" deltaphi="PI/2" aunit="rad" lunit="cm"/>
+
+  <!-- Coil Defined as a union -->
+   <union name="c01">
+     <first ref="coil1part"/>  <second ref="coil2part"/>
+     <positionref ref="coil2Offset" /> 
+     <rotationref ref="identity"/>
+   </union>
+   <union name="c02">
+     <first ref="c01"/>  <second ref="arc1part"/>
+     <positionref ref="arc1Pos" /> 
+     <rotationref ref="arc1Rot" />
+     <firstpositionref ref= "center"/>
+   </union>
+   <union name="c03">
+     <first ref="c02"/>  <second ref="arc2part"/>
+     <positionref ref="arc3Pos" /> 
+     <rotationref ref="arc1Rot" />
+     <firstpositionref ref= "center"/>
+   </union>
+   <union name="CoilFinal">
+     <first ref="c03"/>  <second ref="c03"/>
+     <positionref ref="coil1Offset" /> 
+     <rotationref ref="flip" />
+     <firstpositionref ref= "center"/>
+   </union>
+   <!-- COIL CORE -->
+   <xtru name = "CoilCore" lunit= "cm" >
+     <twoDimVertex x="-13." y="10." />
+     <twoDimVertex x="-1." y="2" />
+     <twoDimVertex x="-1" y="-2" />
+     <twoDimVertex x="-13" y="-10" />    
+     <section zOrder="1" zPosition="-40" xOffset="0" yOffset="0" scalingFactor="1" />
+     <section zOrder="2" zPosition="40" xOffset="0" yOffset="0" scalingFactor="1" />
+   </xtru>
+   <!-- COIL PLUG -->
+   <xtru name = "CoilPlug" lunit= "cm" >
+     <twoDimVertex x="-13." y="10." />
+     <twoDimVertex x="-1." y="2" />
+     <twoDimVertex x="-1" y="-2" />
+     <twoDimVertex x="-13" y="-10" />    
+     <section zOrder="1" zPosition="40" xOffset="0" yOffset="0" scalingFactor="1" />
+     <section zOrder="2" zPosition="50" xOffset="0" yOffset="0" scalingFactor="1" />
+   </xtru>
+   <!-- COIL INSERT -->
+   <xtru name = "CoilInsert" lunit= "cm" >
+     <twoDimVertex x="-13." y="17." />
+     <twoDimVertex x="13." y="17." />
+     <twoDimVertex x="13." y="10." />
+     <twoDimVertex x="1" y="2" />
+     <twoDimVertex x="-1" y="2" />    
+     <twoDimVertex x="-13" y="10" />    
+     <section zOrder="1" zPosition="-50" xOffset="0" yOffset="0" scalingFactor="1" />
+     <section zOrder="2" zPosition="50"  xOffset="0" yOffset="0" scalingFactor="1" />
+   </xtru>
+   <!-- TOP SHIELDING -->
+   <box name="TopShield" x="70" y="13." z="100." lunit="cm"/>
+   <!-- SIDE SHIELDING -->
+   <box name="SideShield" x="15." y="34." z="100." lunit="cm"/>
+   <!-- EXTRA SHIELDING -->
+   <box name="ExoShieldTop" x="202." y="66." z="232." lunit="cm"/>
+   <box name="ExoShieldSide" x="66." y="60." z="232." lunit="cm"/>
+   <box name="ExoShieldFront0" x="70." y="60." z="66." lunit="cm"/>
+   <!-- Beam Pipe  -->
+   <tube name="BeamPipe" z="70." rmin="0." rmax="2.5" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>  
+   <subtraction name="ExoShieldFront" lunit="cm">
+     <first ref="ExoShieldFront0"/>  <second ref="BeamPipe"/>
+     <positionref ref="center" /> 
+     <rotationref ref="identity"/>
+   </subtraction>
+   <!-- Radiator -->
+   <box name="Radiator" x="2.5" y="2.5" z="0.03534" lunit="cm"/>
+   <!-- CENTER PIECE PARTS -->
+
+   <!-- dummy cp2vol piece -->
+   <box name="cp2" x="0.1" y="0.1" z="0.1" lunit="cm"/>
+   <!-- the large box itself -->
+   <box name="CPpart1" x="1.6" y="3.4" z="120." lunit="cm"/>
+   <!-- the first cutout -->
+   <box name="CPpart2a" x="1.2" y=".2" z="140." lunit="cm"/>
+   <box name="CPpart2b" x="0.8" y=".2" z="140." lunit="cm"/>
+   <!-- Center Piece Defined as a subtraction between a box and 4 other boxes -->
+   <subtraction name="CP1" lunit="cm">
+     <first ref="CPpart1"/>
+     <second ref="CPpart2a"/>
+     <positionref ref="slot1"/> 
+     <rotationref ref="identity"/>
+   </subtraction>
+   <subtraction name="CP2" lunit="cm">
+     <first ref="CP1"/>  <second ref="CPpart2a"/>
+     <positionref ref="slot2"/> 
+     <rotationref ref="identity"/>
+   </subtraction>
+   <subtraction name="CP3" lunit="cm">
+     <first ref="CP2"/>  <second ref="CPpart2b"/>
+     <positionref ref="slot3"/> 
+     <rotationref ref="identity"/>
+   </subtraction>
+   <subtraction name="CP" lunit="cm">
+     <first ref="CP3"/>  <second ref="CPpart2b"/>
+     <positionref ref="slot4"/> 
+     <rotationref ref="identity"/>
+   </subtraction>
+ </solids>
+
+ <structure>  
+
+   <volume name="Envelope">
+     <materialref ref="Air"/>
+     <solidref ref="EnvBox"/>
+     <auxiliary auxtype="Color" auxvalue="trans" />
+   </volume>
+   <!-- For dose calculation -->
+   <volume name="TopEnvVol">
+     <materialref ref="Vaccuum"/>
+     <solidref ref="TopEnv"/>
+     <auxiliary auxtype="Color" auxvalue="cyan wire" />
+   </volume>
+   <volume name="SideEnvVol">
+     <materialref ref="Vaccuum"/>
+     <solidref ref="SideEnv"/>
+     <auxiliary auxtype="Color" auxvalue="cyan wire" />
+   </volume>
+   <volume name="FrontEnvVol">
+     <materialref ref="Vaccuum"/>
+     <solidref ref="FrontEnv"/>
+     <auxiliary auxtype="Color" auxvalue="red wire" />
+   </volume>
+   <!-- -->
+   <volume name="CoilVol">
+     <materialref ref="G4_Cu"/>
+     <solidref ref="CoilFinal"/>
+     <auxiliary auxtype="Color" auxvalue="red" />  
+   </volume>
+   
+   <volume name="CoreVol">
+     <materialref ref="G4_Fe"/>
+     <solidref ref="CoilCore"/>
+     <auxiliary auxtype="Color" auxvalue="blue" />    
+   </volume>
+   
+   <volume name="InsertVol">
+     <materialref ref="G4_Cu"/>
+     <solidref ref="CoilInsert"/>
+     <auxiliary auxtype="Color" auxvalue="orange" />    
+   </volume>
+
+   <volume name="PlugVol">
+     <materialref ref="G4_Cu"/>
+     <solidref ref="CoilPlug"/>
+   </volume>
+   
+   <volume name="TopShieldVol">
+     <materialref ref="G4_CONCRETE"/>
+     <solidref ref="TopShield"/>
+     <auxiliary auxtype="Color" auxvalue="yellow" />    
+   </volume>
+   
+   <volume name="SideShieldVol">
+     <materialref ref="G4_CONCRETE"/>
+     <solidref ref="SideShield"/>
+     <auxiliary auxtype="Color" auxvalue="yellow" />    
+   </volume>
+   
+   <!-- ExoShield -->
+   <volume name="ExoShieldTopVol">
+     <materialref ref="G4_Fe"/>
+     <solidref ref="ExoShieldTop"/>
+     <auxiliary auxtype="Color" auxvalue="green" />  
+   </volume>
+   <volume name="ExoShieldSideVol">
+     <materialref ref="G4_Fe"/>
+     <solidref ref="ExoShieldSide"/>
+     <auxiliary auxtype="Color" auxvalue="green" />  
+   </volume>
+   <volume name="ExoShieldFrontVol">
+     <materialref ref="G4_Fe"/>
+     <solidref ref="ExoShieldFront"/>
+     <auxiliary auxtype="Color" auxvalue="green" />  
+   </volume>
+
+   <volume name="RadiatorVol">
+     <materialref ref="G4_W"/>
+     <solidref ref="Radiator"/>
+     <auxiliary auxtype="Color" auxvalue="orange" />    
+   </volume>
+
+   <volume name="CP1Vol">
+     <materialref ref="HeavyMetal"/>
+     <solidref ref="CP"/>
+     <auxiliary auxtype="Color" auxvalue="orange" />     
+   </volume>
+   <volume name="CP2Vol">
+     <materialref ref="Vaccuum"/>
+     <solidref ref="cp2"/>
+   </volume>
+
+   
+   <volume name="BeamPipeVol">
+     <materialref ref="Vaccuum"/>
+     <solidref ref="BeamPipe"/>
+     <auxiliary auxtype="Color" auxvalue="blue" />
+   </volume>
+ 
+  <!--                -->
+  <volume name="World">
+   <materialref ref="Air"/>
+   <solidref ref="WorldBox"/>
+   <auxiliary auxtype="Color" auxvalue="trans" />
+
+   <physvol>
+     <volumeref ref="Envelope"/>
+     <position name="EnvPos" z="-62.0" unit="cm"/>
+     <rotationref ref="identity"/>
+   </physvol>
+   <!-- Dose volumes -->
+   <physvol name="EEE1">
+     <volumeref ref="TopEnvVol"/>
+     <position name="TopEnvPos" y="1495." unit="cm"/>
+   </physvol>
+   <physvol name="EEE6">
+     <volumeref ref="TopEnvVol"/>
+     <position name="BotEnvPos" y="-1495." unit="cm"/>
+   </physvol>
+   <physvol name="EEE5">
+     <volumeref ref="SideEnvVol"/>
+     <position name="RightEnvPos" x="1495." unit="cm"/>
+   </physvol>
+   <physvol name="EEE2">
+     <volumeref ref="SideEnvVol"/>
+     <position name="LeftEnvPos" x="-1495." unit="cm"/>
+   </physvol>
+   <physvol name="EEE3">
+     <volumeref ref="FrontEnvVol"/>
+     <position name="FrontEnvPos" z="-1505." unit="cm"/>
+   </physvol>
+   <physvol name="EEE4">
+     <volumeref ref="FrontEnvVol"/>
+     <position name="BackEnvPos" z="1505." unit="cm"/>
+   </physvol>
+
+   <!-- Coils -->
+   <physvol>
+     <volumeref ref="CoilVol"/>
+     <positionref ref="CoilWorldPos1"/>
+     <rotationref ref="identity"/>
+   </physvol>
+   <physvol>
+     <volumeref ref="CoilVol"/>
+     <positionref ref="CoilWorldPos2"/>
+     <rotationref ref="identity"/>
+   </physvol>
+   <!-- Coil Core -->
+   <physvol>
+     <volumeref ref="CoreVol"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol>
+
+   <physvol>
+     <volumeref ref="CoreVol"/>
+     <positionref ref="center"/>
+     <rotation name="y180" y="PI"/>
+   </physvol>
+   <!-- Plugs -->
+   <physvol>
+     <volumeref ref="PlugVol"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol>
+   
+   <physvol>
+     <volumeref ref="PlugVol"/>
+     <positionref ref="center"/>
+     <rotation name="z180" z="PI"/>
+   </physvol>
+   
+   <physvol>
+     <volumeref ref="PlugVol"/>
+     <position name="plugback1" z="-90." lunit="cm"/>
+     <rotation ref="identity"/>
+   </physvol>
+   
+   <physvol>
+     <volumeref ref="PlugVol"/>
+     <positionref ref="center"/>
+     <rotation name="y180" y="PI"/>
+   </physvol>
+   <!-- Coil Insert (assume Cu) -->
+    <physvol>
+     <volumeref ref="InsertVol"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol>
+   <physvol>
+     <volumeref ref="InsertVol"/>
+     <positionref ref="center"/>
+     <rotation name="z180" z="PI"/>
+   </physvol>  
+   <!-- Top Concrete Shield -->
+   <physvol>
+     <volumeref ref="TopShieldVol"/>
+     <position name="shieldPos1" y="23.5" lunit="cm"/>
+   </physvol>  
+   <physvol>
+     <volumeref ref="TopShieldVol"/>
+     <position name="shieldPos2" y="-23.5" lunit="cm"/>
+   </physvol>  
+   <!-- Side Concrete Shield -->
+   <physvol>
+     <volumeref ref="SideShieldVol"/>
+     <position name="shieldPos3" x="27.5" lunit="cm"/>
+   </physvol>  
+   <physvol>
+     <volumeref ref="SideShieldVol"/>
+     <position name="shieldPos4" x="-27.5" lunit="cm"/>
+   </physvol>
+   <!-- ExoShield Iron -->
+   <physvol>
+     <volumeref ref="ExoShieldTopVol"/>
+     <position name="exoshieldtop" y="63." lunit="cm"/>
+   </physvol>
+   <physvol>
+     <volumeref ref="ExoShieldTopVol"/>
+     <position name="exoshieldbottom" y="-63." lunit="cm"/>
+   </physvol>
+   <physvol>
+     <volumeref ref="ExoShieldSideVol"/>
+     <position name="exoshieldleft" x="-68." lunit="cm"/>
+   </physvol>
+   <physvol>
+     <volumeref ref="ExoShieldSideVol"/>
+     <position name="exoshieldright" x="68." lunit="cm"/>
+   </physvol>
+   <physvol>
+     <volumeref ref="ExoShieldFrontVol"/>
+     <position name="exoshieldfront" z="83." lunit="cm"/>
+   </physvol>
+   <physvol>
+     <volumeref ref="ExoShieldFrontVol"/>
+     <position name="exoshieldback" z="-83." lunit="cm"/>
+   </physvol>
+   <!-- Radiator -->
+   <physvol>
+     <volumeref ref="RadiatorVol"/>
+     <position name="radiatorPos" z="-52.0" lunit="cm"/>
+   </physvol>  
+
+   <!-- Center Piece 1 -->
+   <physvol>
+     <volumeref ref="CP1Vol"/>
+     <position name="cpoffset" z="10.0" lunit="cm"/>
+   </physvol>
+   <physvol>
+     <volumeref ref="CP2Vol"/>
+     <position name="cp2dummyoffset" z="-1500.0" y="-1500" x="-1500" lunit="cm"/>
+   </physvol>   
+  </volume>
+ </structure>
+ 
+  <setup name="Default" version="1.0">
+  <world ref="World"/>
+ </setup>
+</gdml> 

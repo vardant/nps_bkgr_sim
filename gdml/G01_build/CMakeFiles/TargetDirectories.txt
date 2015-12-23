@@ -1,0 +1,2 @@
+/home/vardan/g4-work/g4.10.01/nps/gdml/G01_build/CMakeFiles/G01.dir
+/home/vardan/g4-work/g4.10.01/nps/gdml/G01_build/CMakeFiles/load_gdml.dir

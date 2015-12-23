@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation=
+      "/home/vardan/Downloads/GDML_3_1_3/schema/gdml.xsd">
+
+ <define>
+  <constant name="PI" value="1.*pi"/>
+  <constant name="TWOPI" value="2.*pi"/>
+
+  <quantity name="rin_cham" type="length" value="61.6" unit="cm"/>
+  <quantity name="thick_cham" type="length" value="6.35" unit="cm"/>
+  <quantity name="hight_cham" type="length" value="150." unit="cm"/>
+
+  <quantity name="thick_hms_win" type="length" value="0.04064" unit="mm"/>
+  <quantity name="thick_shms_win" type="length" value="0.02032" unit="mm"/>
+
+  <quantity name="philo_hms_win" type="angle" value="10." unit="deg"/>
+  <quantity name="dphi_hms_win" type="angle" value="80." unit="deg"/>
+
+  <quantity name="philo_shms_win" type="angle" value="-5." unit="deg"/>
+  <quantity name="dphi_shms_win" type="angle" value="-40." unit="deg"/>
+
+  <quantity name="hight_hms_win" type="length" value="20.32" unit="cm"/>
+  <quantity name="hight_shms_win" type="length" value="12.37" unit="cm"/>
+
+  <rotation name="rotx90" x="90" y="0" z="0" unit="deg"/>
+
+  <position name="center" x="0" y="0" z="0"/>
+  <rotation name="identity" x="0" y="0" z="0"/>
+ </define>
+
+ <materials>
+
+  <material name="Al" Z="13.0"> <D value="2.70"/> <atom value="26.98"/>
+  </material>
+
+ </materials>
+
+ <solids> 
+
+  <tube name="ChamberCyl" rmin="rin_cham" rmax="rin_cham+thick_cham"
+  z="hight_cham" deltaphi="TWOPI"/>
+
+  <tube name="WinHMS" rmin="rin_cham" rmax="rin_cham+thick_cham-thick_hms_win"
+	z="hight_hms_win" startphi="philo_hms_win" deltaphi="dphi_hms_win"/>
+
+ </solids>
+
+ <structure>  
+
+  <volume name="Chamber">
+   <materialref ref="Al"/>
+   <solidref ref="ChamberCyl"/>
+  </volume>
+
+ </structure>
+
+ <setup name="Default" version="1.0">
+   <world ref="Chamber"/>
+ </setup>
+
+</gdml>
