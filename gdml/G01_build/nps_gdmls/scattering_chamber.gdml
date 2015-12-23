@@ -31,6 +31,9 @@
   <quantity name="diam_exit_flange" type="length" value="10." unit="cm"/>
   <quantity name="thick_exit_flange" type="length" value="2.5" unit="cm"/>
 
+  <quantity name="thick_exit_win" type="length" value="0.015535" unit="cm"/>
+  <!-- quantity name="thick_exit_win" type="length" value="0.1" unit="cm"/ -->
+
   <rotation name="rotzm90" x="0" y="0" z="-90" unit="deg"/>
   <rotation name="rotxp90" x="90" y="0" z="0" unit="deg"/>
 
@@ -40,6 +43,9 @@
   <position name="exit_tube_shift" x="0"
 	    y="-(hight_exit_flange+thick_cham+rin_cham)/2" z="0"/>
 
+  <position name="exit_win_shift" x="0" y="0"
+	    z="hight_exit_flange+rin_cham+thick_cham"/>
+
   <position name="center" x="0" y="0" z="0"/>
   <rotation name="identity" x="0" y="0" z="0"/>
  </define>
@@ -47,6 +53,9 @@
  <materials>
 
   <material name="Al" Z="13.0"> <D value="2.70"/> <atom value="26.98"/>
+  </material>
+
+  <material name="Ti" Z="22.0"> <D value="4.506"/> <atom value="47.867"/>
   </material>
 
   <material name="Vaccuum" Z="1.0"> <D value="1.e-20"/> <atom value="1."/>
@@ -79,6 +88,19 @@
 
   <tube name="ExitTubeVac" rmin="0." rmax="diam_exit_flange/2-thick_exit_flange"
 	z="hight_exit_flange+thick_cham+rin_cham" deltaphi="TWOPI"/>
+
+  <tube name="ExitWinDisk" rmin="0." rmax="diam_exit_flange/2-thick_exit_flange"
+	z="thick_exit_win" deltaphi="TWOPI"/>
+
+  <tube name="ExitWinDum" rmin="0." rmax="diam_exit_flange/2-thick_exit_flange"
+	z="2.*(hight_exit_flange+thick_cham+rin_cham)+thick_exit_win"
+	deltaphi="TWOPI"/>
+
+  <intersection name="ExitWin">
+    <first ref="ExitWinDum"/>  <second ref="ExitWinDisk"/>
+    <positionref ref="exit_win_shift" /> 
+    <rotationref ref="identity"/>
+  </intersection>
 
   <union name="v1">
    <first ref="InnerCyl"/>  <second ref="WinHMS"/>
@@ -123,12 +145,18 @@
   <volume name="ChamberVac">
    <materialref ref="Vaccuum"/>
    <solidref ref="v4"/>
-   <auxiliary auxtype="Color" auxvalue="red" />
+   <auxiliary auxtype="Color" auxvalue="yellow" />
   </volume>
 
   <volume name="ChamberBody">
    <materialref ref="Al"/>
    <solidref ref="c2"/>
+  </volume>
+
+  <volume name="ExitWindow">
+   <materialref ref="Ti"/>
+   <solidref ref="ExitWin"/>
+   <auxiliary auxtype="Color" auxvalue="red" />
   </volume>
 
  </structure>

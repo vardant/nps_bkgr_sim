@@ -187,6 +187,11 @@ int main(int argc,char **argv)
      visManager->Initialize();
      UImanager->ApplyCommand("/control/execute vis.mac");
 #endif
+
+     if (ui->IsGUI()) {
+       ///         UImanager->ApplyCommand("/control/execute gui.mac");
+     }     
+
      ui->SessionStart();
 #ifdef G4VIS_USE
      delete visManager;
