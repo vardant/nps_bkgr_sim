@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation=
+      "/home/vardan/Downloads/GDML_3_1_3/schema/gdml.xsd">
+
+ <define>
+  <constant name="PI" value="1.*pi"/>
+  <constant name="TWOPI" value="2.*pi"/>
+
+  <!-- from G.Niculescu's thesis -->
+  <quantity name="thick_entr_cap" type="length" value="0.0071" unit="cm"/>
+  <quantity name="thick_exit_cap" type="length" value="0.0125" unit="cm"/>
+  <quantity name="thick_cell_wall" type="length" value="0.0125" unit="cm"/>
+  <quantity name="diam_cell" type="length" value="6.731" unit="cm"/>
+  <quantity name="length_vol" type="length" value="4.38" unit="cm"/>
+
+  <position name="vol_shift" x="0" y="0" z="(thick_entr_cap-thick_exit_cap)/2"/>
+
+  <position name="center" x="0" y="0" z="0"/>
+  <rotation name="identity" x="0" y="0" z="0"/>
+ </define>
+
+ <materials>
+
+  <material name="Al" Z="13.0"> <D value="2.70"/> <atom value="26.98"/>
+  </material>
+
+  <material name="LH2" Z="1.0"> <D value="0.0723"/> <atom value="1."/>
+  </material>
+
+ </materials>
+
+ <solids> 
+
+  <tube name="OuterVol" rmin="0." rmax="diam_cell/2"
+	z="thick_entr_cap+length_vol+thick_exit_cap" deltaphi="TWOPI"/>
+
+  <tube name="InnerTube" rmin="0." rmax="(diam_cell-thick_cell_wall)/2"
+	z="length_vol" deltaphi="TWOPI"/>
+
+  <intersection name="InnerVol">
+    <first ref="OuterVol"/> <second ref="InnerTube"/>
+    <positionref ref="vol_shift"/>
+    <rotationref ref="identity"/>
+  </intersection>
+
+ </solids>
+
+ <structure>  
+
+  <volume name="TargetCell">
+   <materialref ref="Al"/>
+   <solidref ref="OuterVol"/>
+   <auxiliary auxtype="Color" auxvalue="blue" />
+  </volume>
+
+  <volume name="TargetVol">
+   <materialref ref="LH2"/>
+   <solidref ref="InnerVol"/>
+   <auxiliary auxtype="Color" auxvalue="red" />
+  </volume>
+
+ </structure>
+
+ <setup name="Default" version="1.0">
+   <world ref="TargetCell"/>
+ </setup>
+
+</gdml>
