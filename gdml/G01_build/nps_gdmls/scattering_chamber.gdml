@@ -7,30 +7,41 @@
   <constant name="PI" value="1.*pi"/>
   <constant name="TWOPI" value="2.*pi"/>
 
-  <quantity name="rin_cham" type="length" value="61.6" unit="cm"/>
-  <quantity name="thick_cham" type="length" value="6.35" unit="cm"/>
-  <quantity name="hight_cham" type="length" value="150." unit="cm"/>
+  <!-- from B.Metsger's drawings -->
+  <quantity name="rin_cham" type="length" value="41./2*2.54" unit="cm"/>
+  <quantity name="thick_cham" type="length" value="2.*2.54" unit="cm"/>
+  <quantity name="hight_cham" type="length" value="44.75*2.54" unit="cm"/>
 
+  <!-- from G.Niculescu's thesis -->
   <quantity name="thick_hms_win" type="length" value="0.04064" unit="mm"/>
   <quantity name="thick_shms_win" type="length" value="0.02032" unit="mm"/>
 
-  <quantity name="philo_hms_win" type="angle" value="-90." unit="deg"/>
-  <quantity name="dphi_hms_win" type="angle" value="80." unit="deg"/>
+  <!-- from B.Metsger's drawings -->
+  <quantity name="philo_hms_win" type="angle" value="-88." unit="deg"/>
+  <quantity name="dphi_hms_win" type="angle" value="82.5" unit="deg"/>
 
-  <quantity name="philo_shms_win" type="angle" value="5." unit="deg"/>
-  <quantity name="dphi_shms_win" type="angle" value="40." unit="deg"/>
+  <!-- from B.Metsger's drawings, SOS side -->
+  <quantity name="philo_shms_win" type="angle" value="3." unit="deg"/>
+  <quantity name="dphi_shms_win" type="angle" value="124." unit="deg"/>
 
-  <quantity name="hight_hms_win" type="length" value="20.32" unit="cm"/>
-  <quantity name="hight_shms_win" type="length" value="12.37" unit="cm"/>
+  <!-- from B.Metsger's drawings -->
+  <quantity name="hight_hms_win" type="length" value="8*2.54" unit="cm"/>
+  <quantity name="hight_shms_win" type="length" value="15*2.54" unit="cm"/>
 
+  <!-- from B.Metsger's drawings. The thickness is a guess. -->
   <quantity name="hight_entr_flange" type="length" value="5.0" unit="cm"/>
-  <quantity name="diam_entr_flange" type="length" value="7.5" unit="cm"/>
-  <quantity name="thick_entr_flange" type="length" value="2.5" unit="cm"/>
+  <quantity name="diam_entr_flange" type="length" value="3.28*2.54" unit="cm"/>
+  <quantity name="thick_entr_flange" type="length" value="0.82*2.54" unit="cm"/>
 
+  <!-- from B.Metsger's drawings -->
+  <!-- The exit is of oval shape, 2*0.785 horisontally and 1.853 vertically -->
+  <!-- Take average diameter of 1.71" -->
+  <!-- The thickness is a guess. -->
   <quantity name="hight_exit_flange" type="length" value="5.0" unit="cm"/>
-  <quantity name="diam_exit_flange" type="length" value="10." unit="cm"/>
-  <quantity name="thick_exit_flange" type="length" value="2.5" unit="cm"/>
+  <quantity name="diam_exit_flange" type="length" value="1.71*2.54" unit="cm"/>
+  <quantity name="thick_exit_flange" type="length" value="2." unit="cm"/>
 
+  <!-- from G.Niculescu's thesis -->
   <quantity name="thick_exit_win" type="length" value="0.015535" unit="cm"/>
   <!-- quantity name="thick_exit_win" type="length" value="0.1" unit="cm"/ -->
 
