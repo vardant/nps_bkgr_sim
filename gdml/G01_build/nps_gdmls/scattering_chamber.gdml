@@ -31,7 +31,7 @@
   <!-- from B.Metsger's drawings. The thickness is a guess. -->
   <quantity name="hight_entr_flange" type="length" value="5.0" unit="cm"/>
   <quantity name="diam_entr_flange" type="length" value="3.28*2.54" unit="cm"/>
-  <quantity name="thick_entr_flange" type="length" value="0.82*2.54" unit="cm"/>
+  <quantity name="thick_entr_flange" type="length" value="1." unit="cm"/>
 
   <!-- from B.Metsger's drawings -->
   <!-- The exit is of oval shape, 2*0.785 horisontally and 1.853 vertically -->
@@ -39,11 +39,11 @@
   <!-- The thickness is a guess. -->
   <quantity name="hight_exit_flange" type="length" value="5.0" unit="cm"/>
   <quantity name="diam_exit_flange" type="length" value="1.71*2.54" unit="cm"/>
-  <quantity name="thick_exit_flange" type="length" value="2." unit="cm"/>
+  <quantity name="thick_exit_flange" type="length" value="1." unit="cm"/>
 
   <!-- from G.Niculescu's thesis -->
   <quantity name="thick_exit_win" type="length" value="0.015535" unit="cm"/>
-  <!-- quantity name="thick_exit_win" type="length" value="0.1" unit="cm"/ -->
+  <!-- quantity name="thick_exit_win" type="length" value="10" unit="cm"/ -->
 
   <rotation name="rotzm90" x="0" y="0" z="-90" unit="deg"/>
   <rotation name="rotxp90" x="90" y="0" z="0" unit="deg"/>
@@ -116,16 +116,6 @@
   <tube name="ExitWinDisk" rmin="0." rmax="diam_exit_flange/2-thick_exit_flange"
 	z="thick_exit_win" deltaphi="TWOPI"/>
 
-  <tube name="ExitWinDum" rmin="0." rmax="diam_exit_flange/2-thick_exit_flange"
-	z="2.*(hight_exit_flange+thick_cham+rin_cham)+thick_exit_win"
-	deltaphi="TWOPI"/>
-
-  <intersection name="ExitWin">
-    <first ref="ExitWinDum"/>  <second ref="ExitWinDisk"/>
-    <positionref ref="exit_win_shift" /> 
-    <rotationref ref="identity"/>
-  </intersection>
-
   <union name="v1">
    <first ref="InnerCyl"/>  <second ref="WinHMS"/>
    <positionref ref="center" /> 
@@ -180,7 +170,7 @@
 
   <volume name="ExitWindow">
    <materialref ref="Ti"/>
-   <solidref ref="ExitWin"/>
+   <solidref ref="ExitWinDisk"/>
    <auxiliary auxtype="Color" auxvalue="red" />
   </volume>
 
@@ -202,7 +192,7 @@
 
    <physvol>
      <volumeref ref="ExitWindow"/>
-     <positionref ref="center"/>
+     <positionref ref="exit_win_shift"/>
      <rotationref ref="identity"/>
    </physvol> 
 

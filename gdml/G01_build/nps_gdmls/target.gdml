@@ -45,14 +45,8 @@
   <tube name="OuterVol" rmin="0." rmax="diam_cell/2"
 	z="thick_entr_cap+length_vol+thick_exit_cap" deltaphi="TWOPI"/>
 
-  <tube name="InnerTube" rmin="0." rmax="(diam_cell-thick_cell_wall)/2"
+  <tube name="InnerVol" rmin="0." rmax="(diam_cell-thick_cell_wall)/2"
 	z="length_vol" deltaphi="TWOPI"/>
-
-  <intersection name="InnerVol">
-    <first ref="OuterVol"/> <second ref="InnerTube"/>
-    <positionref ref="vol_shift"/>
-    <rotationref ref="identity"/>
-  </intersection>
 
   <box name="TargetAssemblyBox" x="wextent" y="wextent" z="wextent"/>
  </solids>
@@ -83,7 +77,7 @@
 
    <physvol>
      <volumeref ref="TargetVol"/>
-     <positionref ref="center"/>
+     <positionref ref="vol_shift"/>
      <rotationref ref="identity"/>
    </physvol> 
 
