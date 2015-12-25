@@ -59,6 +59,8 @@
 
   <position name="center" x="0" y="0" z="0"/>
   <rotation name="identity" x="0" y="0" z="0"/>
+
+  <quantity name="wextent" type="length" value="200." unit="cm"/>
  </define>
 
  <materials>
@@ -69,7 +71,18 @@
   <material name="Ti" Z="22.0"> <D value="4.506"/> <atom value="47.867"/>
   </material>
 
-  <material name="Vaccuum" Z="1.0"> <D value="1.e-20"/> <atom value="1."/>
+  <element name="Oxygen" formula="O" Z="8."> <atom value="16.0"/>   </element>
+  <element name="Nitrogen" formula="N" Z="7."> <atom value="14.01"/>  </element>
+  <material name="Air">
+   <D value="1.290" unit="mg/cm3"/>
+   <fraction n="0.7" ref="Nitrogen"/>
+   <fraction n="0.3" ref="Oxygen"/>
+  </material>
+
+  <material name="Vaccuum">
+   <D value="1.e-20" unit="mg/cm3"/>
+   <fraction n="0.7" ref="Nitrogen"/>
+   <fraction n="0.3" ref="Oxygen"/>
   </material>
 
  </materials>
@@ -149,6 +162,7 @@
    <rotationref ref="rotxp90"/>
   </union>
 
+  <box name="ChamberAssemblyBox" x="wextent" y="wextent" z="wextent"/>
  </solids>
 
  <structure>  
@@ -170,10 +184,34 @@
    <auxiliary auxtype="Color" auxvalue="red" />
   </volume>
 
+  <volume name="ChamberAssembly">
+   <materialref ref="Air"/>
+   <solidref ref="ChamberAssemblyBox"/>
+
+   <physvol>
+     <volumeref ref="ChamberBody"/>
+     <positionref ref="center"/>
+     <rotationref ref="rotxp90"/>
+   </physvol> 
+
+   <physvol>
+     <volumeref ref="ChamberVac"/>
+     <positionref ref="center"/>
+     <rotationref ref="rotxp90"/>
+   </physvol> 
+
+   <physvol>
+     <volumeref ref="ExitWindow"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+  </volume>
+
  </structure>
 
  <setup name="Default" version="1.0">
-   <world ref="ChamberBody"/>
+   <world ref="ChamberAssembly"/>
  </setup>
 
 </gdml>
