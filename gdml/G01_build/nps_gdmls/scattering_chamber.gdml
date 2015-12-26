@@ -55,7 +55,7 @@
 	    y="-(hight_exit_flange+thick_cham+rin_cham)/2" z="0"/>
 
   <position name="exit_win_shift" x="0" y="0"
-	    z="hight_exit_flange+rin_cham+thick_cham"/>
+	    z="rin_cham+thick_cham+hight_exit_flange-thick_exit_win/2"/>
 
   <position name="center" x="0" y="0" z="0"/>
   <rotation name="identity" x="0" y="0" z="0"/>
