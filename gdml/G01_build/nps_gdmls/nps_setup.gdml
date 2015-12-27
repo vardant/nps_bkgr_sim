@@ -6,8 +6,15 @@
  <define>
   <constant name="PI" value="1.*pi"/>
   <constant name="TWOPI" value="2.*pi"/>
+
   <quantity name="wextent" type="length" value="200.0" unit="cm"/>
+
   <rotation name="rotx90" x="90" y="0" z="0" unit="deg"/>
+
+  <!-- rin_cham + thick_cham + hight_exit_flange + (L_1+L_2+L_3)/2 -->
+  <!-- 41./2*2.54 + 2.*2.54 + 5 + (120+60+300)/2 -->
+  <position name="beam_pipe_shift" x="0" y="0" z="302.15" unit="cm"/>
+
   <position name="center" x="0" y="0" z="0"/>
   <rotation name="identity" x="0" y="0" z="0"/>
  </define>
@@ -42,6 +49,12 @@
    <physvol>
      <file name="nps_gdmls/target.gdml"/>
      <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+   <physvol>
+     <file name="nps_gdmls/beam_pipe.gdml"/>
+     <positionref ref="beam_pipe_shift"/>
      <rotationref ref="identity"/>
    </physvol> 
 
