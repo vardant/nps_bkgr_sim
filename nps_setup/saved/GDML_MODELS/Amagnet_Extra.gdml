@@ -1,0 +1,5 @@
+   <physvol>
+     <volumeref ref="BeamPipeVol"/>
+     <position name="afterMagnet" z="70.1" unit="cm"/>
+   </physvol>
+   

@@ -1,0 +1,199 @@
+//
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
+//
+
+#include "NPSSteppingAction.hh"
+#include "NPSEventAction.hh"
+#include "NPSDetectorConstruction.hh"
+
+#include "globals.hh"
+#include "G4Step.hh"
+#include "G4Event.hh"
+#include "G4RunManager.hh"
+#include "G4LogicalVolume.hh"
+#include "G4ThreeVector.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UIcommand.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+NPSSteppingAction::NPSSteppingAction(NPSEventAction* eventAction)
+: G4UserSteppingAction(),
+  fEventAction(eventAction),
+  fScoringVolume(0), lastTrackID(-1), lastTrackPID(-1), initPoint(0.,0.,0.),
+  crtVolName(""), crtVolNo(-1)
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+NPSSteppingAction::~NPSSteppingAction()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NPSSteppingAction::UserSteppingAction(const G4Step* step)
+{
+  // horrible hack: skip if particle is not a neutron
+  // (attempt to get more neutrons for the event generator test!)
+  /// if (step->GetTrack()->GetDefinition()->GetPDGEncoding()!=2112)     return;
+  ////
+  
+  G4LogicalVolume* volume =
+ step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  // G4cout <<"found a neutron!"<<G4endl;
+
+  if (!fScoringVolume) { 
+    const NPSDetectorConstruction* detectorConstruction
+      = static_cast<const NPSDetectorConstruction*>
+        (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+    fScoringVolume = detectorConstruction->GetScoringVolume();   
+  }
+
+  // try to figure out when we get past the magnet
+  //
+  // GN attempt at saving momentum and position past the magnet!
+
+  G4VPhysicalVolume *thePrePV = step->GetPreStepPoint()->GetPhysicalVolume();
+  G4VPhysicalVolume *thePostPV = step->GetPostStepPoint()->GetPhysicalVolume();
+
+  // output Ntuple
+
+  G4double crtDist, crtKE; // distance in rate-counting volume, in mm
+
+  if(thePostPV && thePrePV) {
+
+    // check our rate-counting volumes
+    if (step->IsLastStepInVolume()) {
+
+      if (((G4String )thePostPV->GetName()).contains("EEE")) {
+
+	// first step in a rate-counting volume, save position
+	crtVolName=((G4String )thePostPV->GetName());
+
+	//	initPoint=step->GetPreStepPoint()->GetPosition();
+	initPoint=step->GetPostStepPoint()->GetPosition();
+
+	//	G4cout << thePrePV->GetName() << " " << thePostPV->GetName()
+	//	       << " " << step->GetTrack()->GetTrackID() << " "
+	//	       << step->GetTrack()->GetDefinition()->GetPDGEncoding()
+	//	       << " first/last " << step->IsFirstStepInVolume() << " "
+	//	       << step->IsLastStepInVolume() << G4endl;
+      }
+    }
+
+    if (step->IsLastStepInVolume()) {
+
+      if (((G4String )thePrePV->GetName()).contains("EEE")) {
+
+	// last step in a rate-counting volume, compute track length in volume
+
+	//	crtDist=sqrt(((G4ThreeVector)step->GetPreStepPoint()->
+	//      GetPosition()).diff2(initPoint));
+	crtDist=sqrt(((G4ThreeVector)step->GetPostStepPoint()->GetPosition()).
+		     diff2(initPoint));
+
+	crtKE=step->GetPreStepPoint()->GetKineticEnergy();
+
+	if (crtDist>1.e-4) {
+
+	  //	  fEventAction->GetHistoManager()->
+	  //	    FillNtuple(fEventAction->GetEvtNo(),
+	  //	       G4UIcommand::ConvertToInt(crtVolName.strip(0, 'E')),
+	  //	       step->GetTrack()->GetDefinition()->GetPDGEncoding(),
+	  //		       crtDist, crtKE);
+
+	  fEventAction->GetHistoManager()->FillNtuple(fEventAction->GetEvtNo(),
+		      1,
+		      step->GetTrack()->GetTrackID(),
+		      step->GetTrack()->GetDefinition()->GetPDGEncoding(),
+		      step->GetTrack()->GetPosition(),
+		      step->GetTrack()->GetMomentum(),
+		      G4UIcommand::ConvertToInt(crtVolName.strip(0, 'E')),
+		      crtDist,
+		      crtKE);
+
+	  //	  G4cout << crtVolName << " " << thePrePV->GetName() << " "
+	  //		 << G4UIcommand::ConvertToInt(crtVolName.strip(0, 'E'))
+	  //		 << " " << crtDist << " " << crtKE << G4endl;
+
+	  //	  G4cout << thePrePV->GetName()
+	  //		 << step->GetPostStepPoint()->GetPosition() << " "
+	  //		 << initPoint << " d = "
+	  //   << sqrt(((G4ThreeVector)step->GetPostStepPoint()->GetPosition()).
+	  //		      diff2(initPoint)) << G4endl;
+	}
+      }
+    }
+
+    // Fill beamline ntuple
+
+    //// COMMENT FOR NOW
+    /*    
+    if (step->GetTrack()->GetTrackID()!=
+    lastTrackID && abs(step->GetTrack()->GetPosition().getZ()-55.*cm)<5.*cm) {
+      fEventAction->GetHistoManager()->FillNtuple(fEventAction->GetEvtNo(),
+			  1,
+			  step->GetTrack()->GetTrackID(),
+			  step->GetTrack()->GetDefinition()->GetPDGEncoding(),
+			  step->GetTrack()->GetPosition(),
+			  step->GetTrack()->GetMomentum());
+			  }
+    */
+    /*
+      if (((G4String )thePostPV->GetName()).contains("World_PV")) {
+      G4cout <<thePrePV->GetName()<<" "<<thePostPV->GetName()<<" "
+      <<step->GetTrack()->GetTrackID()<<" "
+      <<step->GetTrack()->GetDefinition()->GetPDGEncoding()<<" "
+      <<step->GetTrack()->GetPosition()<<" "
+      <<step->GetTrack()->GetMomentum()<<G4endl;
+      }
+    */
+
+  }   //if(thePostPV && thePrePV)
+
+  /*
+    if (step->GetPreStepPoint()->GetPhysicalVolume()!=
+    detectorConstruction->GetMeasureVolume() &&
+    step->GetPostStepPoint()->GetPhysicalVolume()==
+    detectorConstruction->GetMeasureVolume() &&
+    step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() ==
+    "Transportation") {
+    crtID=step->GetTrack()->GetDefinition()->GetPDGEncoding();
+    crtPos=step->GetTrack()->GetPosition();
+    crtMom=step->GetTrack()->GetMomentum();
+    G4cout <<"trackID = "<< step->GetTrack()->GetTrackID()<<" z =
+    "<<crtPos.getX()*cm<<G4endl;
+    }
+  */
+
+  // Check if we are in scoring volume.
+  if (volume != fScoringVolume) return;
+
+  // Collect energy deposited in this step.
+  G4double edepStep = step->GetTotalEnergyDeposit();
+  fEventAction->AddEdep(edepStep);  
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

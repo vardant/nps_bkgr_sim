@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation=
+      "/home/vardan/Downloads/GDML_3_1_3/schema/gdml.xsd">
+
+ <define>
+  <constant name="PI" value="1.*pi"/>
+  <constant name="TWOPI" value="2.*pi"/>
+  <quantity name="wextent" type="length" value="200.0" unit="cm"/>
+  <rotation name="rotx90" x="90" y="0" z="0" unit="deg"/>
+  <position name="center" x="0" y="0" z="0"/>
+  <rotation name="identity" x="0" y="0" z="0"/>
+ </define>
+
+ <materials>
+  <element name="Oxygen" formula="O" Z="8."> <atom value="16.0"/>   </element>
+  <element name="Nitrogen" formula="N" Z="7."> <atom value="14.01"/>  </element>
+  <material name="Air">
+   <D value="1.290" unit="mg/cm3"/>
+   <fraction n="0.7" ref="Nitrogen"/>
+   <fraction n="0.3" ref="Oxygen"/>
+  </material>
+ </materials>
+
+ <solids> 
+  <box name="WorldBox" x="wextent" y="wextent" z="wextent"/>
+ </solids>
+
+ <structure>  
+
+  <volume name="World">
+
+   <materialref ref="Air"/>
+   <solidref ref="WorldBox"/>
+
+   <physvol>
+     <file name="nps_gdmls/scattering_chamber.gdml" volname="ChamberBody"/>
+     <positionref ref="center"/>
+     <rotationref ref="rotx90"/>
+   </physvol> 
+
+   <physvol>
+     <file name="nps_gdmls/scattering_chamber.gdml" volname="ChamberVac"/>
+     <positionref ref="center"/>
+     <rotationref ref="rotx90"/>
+   </physvol> 
+
+   <physvol>
+     <file name="nps_gdmls/scattering_chamber.gdml" volname="ExitWindow"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+   <physvol>
+     <file name="nps_gdmls/target.gdml" volname="TargetCell"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+   <physvol>
+     <file name="nps_gdmls/target.gdml" volname="TargetVol"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+  </volume>
+
+ </structure>
+
+ <setup name="Default" version="1.0">
+  <world ref="World"/>
+ </setup>
+
+</gdml> 

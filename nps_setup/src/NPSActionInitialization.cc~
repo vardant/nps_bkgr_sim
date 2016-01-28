@@ -1,0 +1,82 @@
+//
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
+//
+// $Id: AmagnetActionInitialization.cc 1/2015 gn $
+//
+/// \file AmagnetActionInitialization.cc
+/// \brief Implementation of the AmagnetActionInitialization class
+
+// GN 2015
+#include "AmagnetActionInitialization.hh"
+#include "AmagnetHistoManager.hh"
+#include "AmagnetPrimaryGeneratorAction.hh"
+#include "AmagnetRunAction.hh"
+#include "AmagnetEventAction.hh"
+//#include "AmagnetTrackingAction.hh"
+#include "AmagnetSteppingAction.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+AmagnetActionInitialization::AmagnetActionInitialization()
+ : G4VUserActionInitialization()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+AmagnetActionInitialization::~AmagnetActionInitialization()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AmagnetActionInitialization::BuildForMaster() const
+{
+  // Histo Manager
+  AmagnetHistoManager* histo=new AmagnetHistoManager();
+  
+  // Actions
+  SetUserAction(new AmagnetRunAction(histo));
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void AmagnetActionInitialization::Build() const
+{
+  // Histo Manager
+  AmagnetHistoManager* histo=new AmagnetHistoManager();
+  AmagnetRunAction* runAction = new AmagnetRunAction(histo);  
+  SetUserAction(runAction);
+  //  SetUserAction(new AmagnetRunAction);
+  
+  SetUserAction(new AmagnetPrimaryGeneratorAction);
+  
+  AmagnetEventAction* eventAction = new AmagnetEventAction(histo);
+  SetUserAction(eventAction);
+  ///SetUserAction(new AmagnetTrackingAction);
+  SetUserAction(new AmagnetSteppingAction(eventAction)); 
+
+
+}  
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

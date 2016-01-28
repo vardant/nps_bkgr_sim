@@ -1,0 +1,23 @@
+/run/verbose 2
+/run/initialize
+/control/execute vis.mac
+/vis/open OGL
+/vis/sceneHandler/create OGL
+/vis/viewer/create ! ! 600
+/vis/viewer/refresh
+/vis/drawVolume
+/vis/scene/create
+/vis/scene/add/volume world
+/vis/sceneHandler/attach
+/vis/viewer/set/viewpointThetaPhi 40 40
+/vis/viewer/refresh
+/vis/scene/add/trajectories
+/tracking/storeTrajectory 1
+/vis/scene/notifyHandlers
+/run/beamOn 1
+/vis/scene/notifyHandlers scene-0
+/vis/viewer/update
+/run/beamOn 3
+/vis/viewer/flush
+/vis/viewer/refresh viewer-0
+/vis/viewer/update viewer-0

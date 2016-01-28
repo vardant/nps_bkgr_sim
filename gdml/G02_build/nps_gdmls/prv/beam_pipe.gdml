@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation=
+      "/home/vardan/Downloads/GDML_3_1_3/schema/gdml.xsd">
+
+ <define>
+  <constant name="PI" value="1.*pi"/>
+  <constant name="TWOPI" value="2.*pi"/>
+
+  <constant name="NSEG" value="3"/>
+
+  <matrix name="outer_diam" coldim="1" values="6.25 12.50 25.00"/>
+  <matrix name="inner_diam" coldim="1" values="5.00 11.25 23.75"/>
+  <matrix name="length"     coldim="1" values="120 60 300"/>
+  <!-- matrix name="zpos"       coldim="1" values="60 150 360"/ -->
+  <matrix name="zpos"       coldim="1" values="60 200 550"/>
+
+  <quantity name="boxx" type="length" value="50" unit="cm"/>
+  <quantity name="boxy" type="length" value="50" unit="cm"/>
+  <quantity name="boxz" type="length" value="800" unit="cm"/>
+
+  <variable name="i" value="1"/>
+  <variable name="j" value="1"/>
+  <variable name="k" value="1"/>
+ </define>
+
+ <materials>
+
+  <material name="Al" Z="13.0"> <D value="2.70"/> <atom value="26.98"/>
+  </material>
+
+  <element name="Oxygen" formula="O" Z="8."> <atom value="16.0"/>   </element>
+  <element name="Nitrogen" formula="N" Z="7."> <atom value="14.01"/>  </element>
+
+  <material name="Vaccuum">
+   <D value="1.e-20" unit="mg/cm3"/>
+   <fraction n="0.7" ref="Nitrogen"/>
+   <fraction n="0.3" ref="Oxygen"/>
+  </material>
+
+  <material name="Air">
+   <D value="1.290" unit="mg/cm3"/>
+   <fraction n="0.7" ref="Nitrogen"/>
+   <fraction n="0.3" ref="Oxygen"/>
+  </material>
+
+ </materials>
+
+ <solids>
+  <loop for="i" to="NSEG" step="1">
+   <tube name="tube" rmin="0" rmax="outer_diam[i]/2" z="length[i]"
+   deltaphi="TWOPI" lunit="cm" />
+  </loop>
+
+  <box name="BeamPipeBox" x="boxx" y="boxy" z="boxz"/>
+ </solids>
+
+ <structure>
+
+  <loop for="j" to="NSEG" step="1">
+   <volume name="segment">
+    <materialref ref="Al" />
+    <solidref ref="tube" />
+   </volume>
+  </loop>
+
+  <volume name="BeamPipe">
+   <materialref ref="Air"/>
+   <solidref ref="BeamPipeBox"/>
+
+   <loop for="k" to="NSEG" step="1">
+    <physvol>
+     <volumeref ref="segment" />
+     <position name="pipe_z" x="0" y="0" z="zpos[k]" unit="cm"/>
+     </physvol>
+    </loop>
+
+   </volume>
+
+ </structure>
+
+ <setup name="Default" version="1.0">
+  <world ref="BeamPipe"/>
+ </setup>
+
+</gdml>

@@ -1,0 +1,6 @@
+AuthType Basic
+AuthName "12gev"
+AuthUserFile /group/hallc/www/hallcweb/DocDB/.htpasswd
+<Limit GET>
+require user admin 12gev
+</Limit>

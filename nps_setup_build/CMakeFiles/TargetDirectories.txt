@@ -1,0 +1,1 @@
+/home/vardan/g4-work/g4.10.01/nps/nps_setup_build/CMakeFiles/nps.dir

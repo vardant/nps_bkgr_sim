@@ -1,0 +1,2 @@
+/home/vardan/g4-work/g4.10.01/nps/gdml/G02_build/CMakeFiles/G02.dir
+/home/vardan/g4-work/g4.10.01/nps/gdml/G02_build/CMakeFiles/geotest.dir

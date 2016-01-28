@@ -1,0 +1,43 @@
+# Macro file based on example B1
+# 
+# Can be run in batch, without graphic
+# or interactively: Idle> /control/execute run1.mac
+#
+# Change the default number of workers (in multi-threading mode) 
+#/run/numberOfWorkers 4
+#
+# Initialize kernel
+/run/initialize
+#
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+# setup scorer
+#
+#/score/create/boxMesh amesh01
+#/score/mesh/boxSize 100. 100. 100. cm
+#/score/mesh/nBin 30 30 30
+#/score/mesh/translate/xyz 0.5 0.5 0.0 cm
+
+#/score/quantity/energyDeposit eDep
+#/score/quantity/passageCellCurrent totCurrent 1
+#/score/quantity/passageCellCurrent justGammaN 1
+#/score/filter/particle justGammaN gamma neutron
+
+# 
+# electron 8.8 GeV,  direction (0.,0.,1.)
+#
+/gun/particle e-
+/gun/energy 8800 MeV
+/tracking/verbose 0
+/event/verbose 0
+
+#
+#/vis/disable
+/run/beamOn 1000
+#/vis/enable
+
+#/score/dumpQuantityToFile amesh01 eDep amesh_edep10k.txt
+#/score/dumpQuantityToFile amesh01 totCurrent amesh_totI10k.txt
+#/score/dumpQuantityToFile amesh01 justGammaN amesh_gnI10k.txt

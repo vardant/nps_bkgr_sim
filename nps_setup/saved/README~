@@ -1,0 +1,191 @@
+//
+// README for the "amagnet" Geant4 (G4) code originally developed for the 
+// Wide Angle Compton Scattering proposal @ JLab
+// v. 001, 09/04/2015
+// Gabriel Niculescu, 2015, JMU
+//
+
+0. Basic Information:
+
+* This is a G4 code (originally) used to simulate the sweeping magnet
+proposed for the WACS-ALL program at Jefferson Lab.
+* It is based on a couple of the G4 "basic" examples.
+* The code was originally developed on a CentOS 7. Linux box
+and compiled against the G4 version: 4.10.01
+
+1. Design Features:
+
+* The code was originally designed to simulate the transport of subatomic particles in a magnetic field.
+* It reads a magnetic field map and uses a 3D linear interpolation routine for obtaining field values. A RK4 routine is used for particle tracing in the field.
+An additional parameter is used for the "field strength" (i.e. a multiplicative
+constant used to scale up/down the values read from the field map).
+* One of the main goals for the original program was to be able to estimate
+dose rates and fluxes in various part of the simulated world. The code implements and uses "ghost volumes" (i.e. vacuum--filled volumes in which the scoring is done) - these can be modified and new volumes added/subtracted from the "world" without having to recompile the code.
+* The code interfaces with ROOT, a typical output tree will have the entries
+that record: ghost_volume_ID (i.e. an integer used to identify the ghost volume), the geant ID of the particle (11-electron, 22-photon, etc.), the energy deposition, the pathlength in the ghost volume (these would be needed for calculating
+the dose rate), the entry point (x,y,z) in the ghost volume. Additionally the
+original (gun particle) can be recorded - though that is comented out in this version.
+* To allow the on-the-fly geometry and/or material modification without having
+to recompile the code, the gdml extension of G4 was used.
+* The code interfaces well (we tested) with the DAWN (postscript, very large output files, minimal interface) and the OpenGL (OGL) interfaces (good interactive interface - ideal for checking out a new/modified geometry); for either (as well
+as other G4 graphic interface choices extra libraries might/will be required.
+
+*********************
+NOTE: Depending on what graphic card your Linux box has you might be limited
+as to the choices of graphic interfaces available to you. If you find that your
+Linux box is underpowered graphics-wise you might want to consider investing in
+a half-way decent graphics card: for checking geometry and a few trajectories
+one does not need the fancy GPUs needed for lattice calculation, a $50-$100
+card (preferably NVidia as they provide Linux drivers for their products) will do.
+*********************
+
+* As the code was also used a didactic tool for getting undergraduate physics
+students acquainted with simulations in particle/nuclear physics some of the
+approaches in the code are suboptimal.
+* For the "amagnet" geometry anticipated for the WACS-ALL project the code ran about 10k events/s/core; higher/lower speeds can be achieved for simpler/complex
+worlds and if higher degree of optimization is implemented.
+
+* By default the code uses the system time to initialize the random number
+generator. This way every time the simulation is run one will get a guaranteed
+"fresh" set of particles. The two seeds used to initialize the random number
+generator are printed on the screen so conceivably one can save those and modify
+the code to re-use them if that behavior is desired.
+
+2 Requirements:
+
+* Geant4 installation, version 4.10.01 or higher. The code compiles multithreaded but was not tested for running in that mode.
+* G4 gdml extension with all of its dependencies (xerces, etc.). Be sure to compile the code with the GDML option turned ON (it is OFF by default). One can use
+a line like:
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/cmake -DGEANT4_USE_GDML=ON /path/to/geant4.10.01
+when compiling (see below as well)
+* ROOT installation (for postprocessing the trees produced by the simulation) and ROOT extension to G4 (for producing the trees in the first place).
+* Internet connection. By default the GDML XMLSchema is stored at CERN and
+needs to be accessed every time the geometry is initialized. However, in
+the process of installing the GDML extension one actually gets a copy of
+said schema on the local machine. One can eliminate the internet dependence by
+changing the line at top of the GDML geometry definition to point to the local
+copy of the Schema. This it the approach taken in this distribution.
+
+**********************
+NOTE: The "schema" line points to the version installed on my machine. Unless your user name is the same as mine (and you put your shema in the same
+place I did) the line:
+
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/home/gab
+riel/Downloads/GDML_3_1_1/schema/gdml.xsd">
+
+needs to be modified to reflect the setup of your machine (if internet is no problem I reccommend you point to the "official" schema online)
+************************
+
+* Disk space. Depending on how many events one needs, G4 simulations can eat up
+disk space very quickly. It is very frustrating to lose many hours of simulation
+to a disk full event! I would not go with anything below 1 Gig of space (and
+more will not go amis!)
+
+3. Code organization/Compiling
+
+* like many G4 programs this code is organized in two main directories:
+Amagnet_dev and Amagnet_run
+
+Amagnet_dev: contains the source code and other files needed for the program to
+run properly
+
+Amagnet_run: is the place where the code is supposed to run. It is also the place where the code is compiled. Typically one wants to start with a fresh, empty directory. In the process of compiling, G4 will copy some files into this directory and one can allways make symbolic links as needed.
+
+Below is a list of files that are present in these directories:
+
+Amagnet_dev:
+
+Amagnet.cc - the main G4 program. Modify as needed
+src        - directory holding the .cc files Amagnet needs. Each of these files
+             typically defines one/more classes of G4 objects
+include    - header .h files that go with .cc files in src
+Amagnet.in - example of a typical macro input for the code
+Amagnet.out- example of a typical code output
+beam_definition.txt - plain text file that defines the "particle gun" used in the            simulation. The format is:
+             beam Energy (in MeV),
+	     x&y spread (one number)
+	     initial position in world coordinates in cm (3 numbers)
+	     - for a total of 5 numbers in single line (space delimited).
+	     the rest of the file is ignored, can be used to store
+	     older/alternative beam choices.
+field_str.txt - plain text file containing a single real value, used to scale
+             the values read from the field map.
+DumpMagnet - directory where there field map is stored. The only file in
+             this directory is: Dump-field.table, which contains the field
+	     map itself. See that file for the format.
+GDML_MODELS - directory storing the GDML models of the simulated world. By
+             default the code reads only the file "Amagnet.gdml". In this
+	     distribution this file is only a symbolic link to the current
+	     version of the world. Try changing this link between
+	     Amagnet.gdml.ThinEx26CuW
+	     and
+	     Amagnet.gdml.Stripped
+	     and see how flexible the code can be; without changing/compiling
+	     anything.
+	     *** NOTE: *** you will need a symbolic link to Amagnet.gdml in your
+	     Amagnet_run directory!
+	     ************
+
+init_vis.mac, vis.mac - macros dealing with the initialization of the g4
+             visual interface. Modify as needed.
+
+run1.mac, run2.mac, run1b.mac - Macros used for running the code, usually in
+             batch mode. They initialize the code, setup tracking (and other)
+	     default flags, define the type and energy of the gun particle,
+	     define the number of events to be simulated, start the simulation
+	     *** NOTE: in all these macros the lines that start with # are
+	     comment lines, some of these might be occasionally useful, most are
+	     only kept for historic reasons
+run_me     - very simple example on how one can start several simulation in
+             succession. the whole "script" is basically a succession of:
+	     ./amagnet run1b.mac output_file.root commands.
+	     if one sources run_me (from the "run" directory not from the "dev"!)            then the code will run using the options in run1b.mac 19 times,
+	     producing 19 different root trees.
+
+ROOT postprocessing files. These you want to either copy in their separate
+directory (preffered) or at least copy/use in the _run directory. Two examples
+are included here:
+
+amagnet_genplot.C - a ROOT macro used to produce distribution of particle abundances per million electrons simulated
+amagnet_remcalc.C - a ROOT macro used to calculate the dose rate through various
+ghost volumes (as defined in the GDML geometry and saved in the ROOT tree). This uses the same procedure as Pawel Degtiarenko.
+*************************************
+*** VERY IMPORTANT NOTE: ****
+*************************************
+At present time this ROOT code does not implement a mechanism of retrieving/using the volume of the ghost volumes directly from the GDML file. So the user must
+make sure that the line(s) that defines these volumes:
+
+Double_t rem_vols[7]={0.,4050000.,1800000.,420000.,420000.,1800000.,4050000.}; // ghost volumes in cm^3
+
+is a) dimensioned properly and b) the volumes themselves MATCH the volumes of
+the ghost volumes defined in the GDML used for this simulation. It is VERY
+IMPORTANT that the user double-checks these values as they can easily INVALIDATE
+the result of the calculation.
+*************************************
+*************************************
+
+
+History,CMakeLists.txt,GNUmakefile - these are automatically produced in the process of compiling/running the code
+
+
+Amagnet_run files:
+           - As noted above it is recommended that one starts with an empty
+	   Amagnet_run directory when first compiling the code. However, to
+	   run properly a number of files need to be (or at least symbolic
+	   links need to exist) in this directory. Some of these are copied by
+	   G4 in the process of compiling, some are not, the user should take
+	   care of those that are not copied by default.
+	   Here are the files needed:
+	   beam_definition.txt (copy from dev)
+	   field_strength.txt (ditto)
+	   Dump_Magnet directory (the code uses relative paths so we need this here).
+	   amagnet - the executable code
+	   Amagnet.gdml - symbolic link to the Amagnet.gdml from ...dev/GDML_MODELS/Amagnet.gdml
+	   macros as needed - most of these are copied by G4
+	   ROOT postprocessing files (from dev above) as needed.
+
+Best of luck running this code!
+If you need more/additional information drop me a line at:
+gabriel@jlab.org or at
+niculegx@jmu.edu
+
