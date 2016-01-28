@@ -15,6 +15,15 @@
   <!-- 41./2*2.54 + 2.*2.54  + 5                 + (120+60+300)/2 -->
   <position name="beam_pipe_shift" x="0" y="0" z="302.15" unit="cm"/>
 
+  <!-- calorimeter at 30 deg -->
+  <rotation name="calorimeter_rot" x="0" y="-30" z="0" unit="deg"/>
+  <position name="calorimeter_shift" x="409.*0.5" y="0" z="409.*0.866"
+	    unit="cm"/>
+  <!-- calorimeter at 10.57 deg (min. angle for pi0 -->
+  <rotation name="calorimeter_rot" x="0" y="-10.57" z="0" unit="deg"/>
+  <position name="calorimeter_shift" x="409.*0.18343666" y="0" z="409.*0.983"
+	    unit="cm"/>
+
   <position name="center" x="0" y="0" z="0"/>
   <rotation name="identity" x="0" y="0" z="0"/>
  </define>
@@ -56,6 +65,12 @@
      <file name="nps_gdmls/beam_pipe.gdml"/>
      <positionref ref="beam_pipe_shift"/>
      <rotationref ref="identity"/>
+   </physvol> 
+
+   <physvol>
+     <file name="nps_gdmls/calorimeter.gdml"/>
+     <positionref ref="calorimeter_shift"/>
+     <rotationref ref="calorimeter_rot"/>
    </physvol> 
 
   </volume>
