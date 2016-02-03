@@ -24,38 +24,92 @@
 // ********************************************************************
 //
 
-#include "NPSRun.hh"
+#include "NPSCalorimeterHit.hh"
+#include "G4UnitsTable.hh"
+#include "G4VVisManager.hh"
+#include "G4Circle.hh"
+#include "G4Colour.hh"
+#include "G4VisAttributes.hh"
+
+#include <iomanip>
+
+G4ThreadLocal G4Allocator<NPSCalorimeterHit>* NPSCalorimeterHitAllocator=0;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NPSRun::NPSRun()
-: G4Run(),
-  fEdep(0.), 
-  fEdep2(0.)
-{} 
+NPSCalorimeterHit::NPSCalorimeterHit() : G4VHit(),
+	 fCol(-1), fRow(-1), fCharge(9), fEdep(999999.), fPos(G4ThreeVector())
+{}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NPSRun::~NPSRun()
-{} 
- 
+NPSCalorimeterHit::~NPSCalorimeterHit() {}
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NPSRun::Merge(const G4Run* run)
+NPSCalorimeterHit::NPSCalorimeterHit(const NPSCalorimeterHit& right) : G4VHit()
 {
-  const NPSRun* localRun = static_cast<const NPSRun*>(run);
-  fEdep  += localRun->fEdep;
-  fEdep2 += localRun->fEdep2;
-
-  G4Run::Merge(run); 
-} 
+  fCol    = right.fCol;
+  fRow    = right.fRow;
+  fCharge = right.fCharge;
+  fEdep   = right.fEdep;
+  fPos    = right.fPos;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NPSRun::AddEdep (G4double edep)
+NPSCalorimeterHit::NPSCalorimeterHit(G4int& col, G4int& row, G4int& charge,
+				     G4double& edep, G4ThreeVector& pos) {
+  fCol    = col;
+  fRow    = row;
+  fCharge = charge;
+  fEdep   = edep;
+  fPos    = pos;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+const NPSCalorimeterHit&
+NPSCalorimeterHit::operator=(const NPSCalorimeterHit& right)
 {
-  fEdep  += edep;
-  fEdep2 += edep*edep;
+  fCol    = right.fCol;
+  fRow    = right.fRow;
+  fCharge = right.fCharge;
+  fEdep   = right.fEdep;
+  fPos    = right.fPos;
+  return *this;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4int NPSCalorimeterHit::operator==(const NPSCalorimeterHit& right) const
+{
+  return ( this == &right ) ? 1 : 0;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NPSCalorimeterHit::Draw()
+{
+  G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
+  if(pVVisManager)
+  {
+    G4Circle circle(fPos);
+    circle.SetScreenSize(4.);
+    circle.SetFillStyle(G4Circle::filled);
+    G4Colour colour(1.,0.,0.);
+    G4VisAttributes attribs(colour);
+    circle.SetVisAttributes(attribs);
+    pVVisManager->Draw(circle);
+  }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NPSCalorimeterHit::Print()
+{
+  G4cout << "NPSCalorimeterHit: col = " << fCol << "  row = " << fRow
+	 << "  charge = " << fCharge << "  Edep = " << fEdep << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

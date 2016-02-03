@@ -31,9 +31,9 @@
   <material name="Al" Z="13.0"> <D value="2.70"/> <atom value="26.98"/>
   </material>
 
-  <material name="LH2" Z="1.0"> <D value="0.0723"/> <atom value="1."/>
+  <!-- material name="LH2" Z="1.0"> <D value="0.0723"/> <atom value="1."/ -->
   <!-- test: iron instead of lh2 -->
-  <!-- material name="LH2" Z="26.0"> <D value="7.874"/> <atom value="55.845"/ -->
+  <material name="LH2" Z="26.0"> <D value="7.874"/> <atom value="55.845"/>
 
   </material>
 
@@ -69,7 +69,8 @@
    <volume name="TargetCell">
      <materialref ref="Al"/>
      <solidref ref="OuterVol"/>
-     <auxiliary auxtype="Color" auxvalue="blue" />
+     <!-- this generates error message -->
+     <!-- auxiliary auxtype="Color" auxvalue="blue"/ -->
 
      <physvol>
        <volumeref ref="TargetVol"/>

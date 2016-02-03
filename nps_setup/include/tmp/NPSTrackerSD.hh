@@ -24,67 +24,41 @@
 // ********************************************************************
 //
 
-#ifndef NPSDetectorConstruction_h
-#define NPSDetectorConstruction_h 1
+#ifndef NPSTrackerSD_h
+#define NPSTrackerSD_h 1
 
-#include "globals.hh"
-#include "SimpleField.hh"
-#include "G4VUserDetectorConstruction.hh"
-#include "G4ThreeVector.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolumeStore.hh"
+#include "G4VSensitiveDetector.hh"
 
-// attempt to use the GDML parser
+#include "NPSTrackerHit.hh"
+
 #include <vector>
-#include "G4GDMLParser.hh"
 
-class G4LogicalVolumeStore;
-class G4LogicalVolume;
-class G4VPhysicalVolume;
-class G4Material;
-class G4Mag_UsualEqRhs;
-class G4MagIntegratorStepper;
-class G4ChordFinder;
-class G4UniformMagField;
-class G4UserLimits;
+class G4Step;
+class G4HCofThisEvent;
 
-/// Detector construction class to define materials and geometry.
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class NPSDetectorConstruction : public G4VUserDetectorConstruction
-{
+// NPSTracker sensitive detector class
+// The hits are accounted in ProcessHits() function which is called
+// by Geant4 kernel at each step. A hit is created with each step with non zero 
+// energy deposit.
+
+class NPSTrackerSD : public G4VSensitiveDetector {
+
 public:
-  NPSDetectorConstruction();
-  NPSDetectorConstruction(G4VPhysicalVolume *aworld,
-			  G4LogicalVolume *scoring)
-  {
-    G4cout << "We are using GDML..."<<G4endl;
-    physWorld =  aworld;
-    fScoringVolume = scoring;
-  };
-  
-  virtual ~NPSDetectorConstruction();
 
-  virtual G4VPhysicalVolume* Construct();
-  virtual void ConstructSDandField();
-  G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
+  NPSTrackerSD(const G4String& name, const G4String& hitsCollectionName);
+  virtual ~NPSTrackerSD();
   
-protected:
-  G4LogicalVolume*  fScoringVolume;
+  // methods from base class
+  virtual void   Initialize(G4HCofThisEvent* hitCollection);
+  virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* history);
+  virtual void   EndOfEvent(G4HCofThisEvent* hitCollection);
 
 private:
 
-  void ConstructField();
-  
-  SimpleField *fField;
-  ////G4UniformMagField *fField;
-  G4Mag_UsualEqRhs *fEquation;
-  G4double minStepMagneticField;
-  G4MagIntegratorStepper* fStepper;
-  G4ChordFinder*          fChordFinder;
-
-  G4VPhysicalVolume* physWorld;
-
-  G4UserLimits* fStepLimit;            // pointer to user step limits
+  NPSTrackerHitsCollection* fHitsCollection;
+  G4int lastID;
 
 };
 

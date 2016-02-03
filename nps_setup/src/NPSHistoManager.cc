@@ -37,9 +37,10 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NPSHistoManager::NPSHistoManager()
-  :fRootFile(0), 
-   fNtuple(0), fEvent(-1), fTrackID(-1), fID(-1), fX(0), fY(0), fZ(0),
-   fPx(0), fPy(0), fPz(0), fDist(0), fKE(0), fVol(-1)
+  :fRootFile(0), fNtuple(0),
+   //   fEvent(-1), fTrackID(-1), fID(-1), fX(0), fY(0), fZ(0),
+   //   fPx(0), fPy(0), fPz(0), fDist(0), fKE(0), fVol(-1)
+   fCol(-1), fRow(-1), fCharge(-999), fEdep(-1.), fX(0), fY(0), fZ(0)
 {
   fRootFileName="nps_setup.root";
   // histogram(s)
@@ -52,15 +53,16 @@ NPSHistoManager::NPSHistoManager()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NPSHistoManager::NPSHistoManager(char *aname)
-:fRootFile(0), 
- fNtuple(0), fEvent(-1), fTrackID(-1), fID(-1), fX(0), fY(0), fZ(0),
- fPx(0), fPy(0), fPz(0), fDist(0), fKE(0), fVol(-1)
+:fRootFile(0), fNtuple(0),
+ // fEvent(-1), fTrackID(-1), fID(-1), fX(0), fY(0), fZ(0),
+ // fPx(0), fPy(0), fPz(0), fDist(0), fKE(0), fVol(-1)
+ fCol(-1), fRow(-1), fCharge(-999), fEdep(-1.), fX(0), fY(0), fZ(0)
 {
   fRootFileName=aname;  
   // histogram(s)
   for (G4int k=0; k<MaxHisto; k++) fHisto[k] = 0;
     
-  // beam pipe & rad budget ntuple
+  // ntuple
   fNtuple = 0;
 
   // rad budget ntuple
@@ -83,18 +85,20 @@ void NPSHistoManager::book()
  //
  fRootFile = new TFile(fRootFileName,"RECREATE");
  if(!fRootFile) {
-   G4cout << " HistoManager::book :" 
-          << " problem creating the ROOT TFile "
+   G4cout << " ***** HistoManager::book :" 
+          << " problem creating the ROOT TFile *****"
           << G4endl;
    return;
  }
    
- fHisto[1] = new TH1D("h1", "Test Histogram", 100, 0., 800*CLHEP::MeV);
+ // fHisto[1] = new TH1D("h1", "Total Edep(GeV)", 100, 0., 5*CLHEP::GeV);
+ fHisto[1] = new TH1D("h1", "Total Edep(MeV)", 100, 0., 5000.);
  if (!fHisto[1]) G4cout << "\n can't create histo 1" << G4endl;
 
  // create an ntuple in subdirectory "tuples"
  //
  fNtuple = new TTree("rem", "rem");
+ /*
  fNtuple->Branch("event", &fEvent, "event/I");
  fNtuple->Branch("track", &fTrackID, "track/I");
  fNtuple->Branch("ID", &fID, "ID/I");
@@ -107,14 +111,22 @@ void NPSHistoManager::book()
  fNtuple->Branch("vol", &fVol, "vol/I");
  fNtuple->Branch("dist", &fDist, "dist/D");
  fNtuple->Branch("KE", &fKE, "KE/D");
+ */
  /* 
  fNtuple2 = new TTree("rem", "rem");
  fNtuple2->Branch("event", &fEvent, "event/I");
- fNtuple2->Branch("vol", &fNtrack, "vol/I");
+ fNtuple2->Branch("vol", &fNtrack, "vol/I"); ???
  fNtuple2->Branch("ID", &fID, "ID/I");
  fNtuple2->Branch("dist", &fDist, "dist/D");
  fNtuple2->Branch("KE", &fKE, "KE/D");
  */
+ fNtuple->Branch("col", &fCol, "col/I");
+ fNtuple->Branch("row", &fRow, "row/I");
+ fNtuple->Branch("charge", &fCharge, "charge/I");
+ fNtuple->Branch("edep", &fEdep, "Edep/D");
+ fNtuple->Branch("x", &fX, "x/D");
+ fNtuple->Branch("y", &fY, "y/D");
+ fNtuple->Branch("z", &fZ, "z/D");
  G4cout << "\n----> Root file is opened in " << fRootFileName << G4endl;
 }
 
@@ -156,54 +168,48 @@ void NPSHistoManager::Normalize(G4int ih, G4double fac)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NPSHistoManager::FillNtuple(G4int anEvent, G4int nTrack, G4int aTrackID,
-				 G4int aID,  G4ThreeVector pos,
-				 G4ThreeVector mom, G4int aVol, G4double aDist,
-				 G4double aKE)
+//void NPSHistoManager::FillNtuple(G4int anEvent, G4int nTrack, G4int aTrackID,
+//G4int aID,  G4ThreeVector pos,
+//G4ThreeVector mom, G4int aVol, G4double aDist,
+//G4double aKE)
+
+void NPSHistoManager::FillNtuple(G4int col, G4int row, G4int charge,
+				 G4double edep,  G4ThreeVector pos)
 {
 
-  fEvent=anEvent;
-  fNtrack=nTrack;
-  fTrackID=aTrackID;
-  fID=aID;
-  //  fX=pos.getX()/mm;
-  //fY=pos.getY()/mm;
-  //fZ=pos.getZ()/mm;
-  //fPx=mom.getX()/MeV;
-  //fPy=mom.getY()/MeV;
-  //fPz=mom.getZ()/MeV;
+  //  fEvent=anEvent;
+  //  fNtrack=nTrack;
+  //  fTrackID=aTrackID;
+  //  fID=aID;
+  //  //  fX=pos.getX()/mm;
+  //  //fY=pos.getY()/mm;
+  //  //fZ=pos.getZ()/mm;
+  //  //fPx=mom.getX()/MeV;
+  //  //fPy=mom.getY()/MeV;
+  //  //fPz=mom.getZ()/MeV;
+  //  fX=pos.getX();
+  //  fY=pos.getY();
+  //  fZ=pos.getZ();
+  //  fPx=mom.getX();
+  //  fPy=mom.getY();
+  //  fPz=mom.getZ();
+  //  fVol=aVol;
+  //  fDist=aDist;
+  //  fKE=aKE;
+  fCol = col;
+  fRow = row;
+  fCharge = charge;
+  fEdep = edep;
   fX=pos.getX();
   fY=pos.getY();
   fZ=pos.getZ();
-  fPx=mom.getX();
-  fPy=mom.getY();
-  fPz=mom.getZ();
-  fVol=aVol;
-  fDist=aDist;
-  fKE=aKE;
+
   if (fNtuple) {
     //    G4cout <<"filling ntuple right now!\n";
     fNtuple->Fill();
   }
 
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-/*
-void AmagnetHistoManager::FillNtuple(G4int anEvent, G4int nTrack, G4int aID, G4double dist, G4double KE)
-{
-  fEvent=anEvent;
-  fNtrack=nTrack;
-  fID=aID;
-  fDist=dist;
-  fKE=KE;
-  if (fNtuple2) {
-    //    G4cout <<"filling ntuple right now!\n";
-    fNtuple2->Fill();
-  }
-
-}
-*/
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -215,7 +221,7 @@ void NPSHistoManager::PrintStatistic()
     /*
     G4cout 
     << " EAbs : mean = " << G4BestUnit(fHisto[1]->GetMean(), "Energy") 
-            << " rms = " << G4BestUnit(fHisto[1]->GetRMS(),  "Energy") << G4endl;
+    << " rms = " << G4BestUnit(fHisto[1]->GetRMS(),  "Energy") << G4endl;
     */
   }
 }

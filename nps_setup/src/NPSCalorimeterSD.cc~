@@ -24,38 +24,83 @@
 // ********************************************************************
 //
 
-#include "NPSRun.hh"
+#include "NPSCalorimeterSD.hh"
+#include "G4HCofThisEvent.hh"
+#include "G4Step.hh"
+#include "G4ThreeVector.hh"
+#include "G4SDManager.hh"
+#include "G4ios.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NPSRun::NPSRun()
-: G4Run(),
-  fEdep(0.), 
-  fEdep2(0.)
-{} 
+NPSCalorimeterSD::NPSCalorimeterSD(const G4String& name,
+				   const G4String& hitsCollectionName) 
+ : G4VSensitiveDetector(name),
+   fHitsCollection(0), lastID(-1)
+{
+  collectionName.insert(hitsCollectionName);
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NPSRun::~NPSRun()
-{} 
+NPSCalorimeterSD::~NPSCalorimeterSD() 
+{
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NPSCalorimeterSD::Initialize(G4HCofThisEvent* hce)
+{
+  // Create hits collection
+
+  fHitsCollection 
+  = new NPSCalorimeterHitsCollection(SensitiveDetectorName, collectionName[0]); 
+
+  // Add this collection in hce
+
+  G4int hcID 
+    = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
+  hce->AddHitsCollection( hcID, fHitsCollection ); 
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4bool NPSCalorimeterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+{  
+  G4int crtID=aStep->GetTrack()->GetTrackID();
  
+  // GN: We want only one hit in the beam pipe volume to store in the Ntuple
+  // at the end of the event. So add a new hit only when the old and new IDs
+  // differ.
+
+  if (crtID != lastID ) {
+    //    G4cout << "old and new IDs "<<lastID<<" "<<crtID<<G4endl;
+    lastID = crtID;
+    NPSCalorimeterHit* newHit = new NPSCalorimeterHit();
+
+    newHit->SetTrackID  (aStep->GetTrack()->GetTrackID());
+    newHit->SetID (aStep->GetTrack()->GetDynamicParticle()->GetPDGcode());
+    newHit->SetMom (aStep->GetTrack()->GetMomentum());
+    newHit->SetPos (aStep->GetPostStepPoint()->GetPosition());
+    fHitsCollection->insert( newHit );
+
+  }
+  //newHit->Print();
+
+  return true;
+}
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NPSRun::Merge(const G4Run* run)
+void NPSCalorimeterSD::EndOfEvent(G4HCofThisEvent*)
 {
-  const NPSRun* localRun = static_cast<const NPSRun*>(run);
-  fEdep  += localRun->fEdep;
-  fEdep2 += localRun->fEdep2;
-
-  G4Run::Merge(run); 
-} 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void NPSRun::AddEdep (G4double edep)
-{
-  fEdep  += edep;
-  fEdep2 += edep*edep;
+  //  if ( verboseLevel>1 ) { 
+  //  G4int nofHits = fHitsCollection->entries();
+  //   G4cout << G4endl
+  //          << "-------->Hits Collection: in this event they are " << nofHits 
+  //          << " hits in the tracker chambers: " << G4endl;
+  //  for ( G4int i=0; i<nofHits; i++ ) (*fHitsCollection)[i]->delete();
+  //}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -24,63 +24,83 @@
 // ********************************************************************
 //
 
-#include "NPSSteppingAction.hh"
-#include "NPSEventAction.hh"
-#include "NPSDetectorConstruction.hh"
-
-#include "globals.hh"
+#include "NPSTrackerSD.hh"
+#include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
-#include "G4Event.hh"
-#include "G4RunManager.hh"
-#include "G4LogicalVolume.hh"
 #include "G4ThreeVector.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4UIcommand.hh"
+#include "G4SDManager.hh"
+#include "G4ios.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NPSSteppingAction::NPSSteppingAction(NPSEventAction* eventAction)
-: G4UserSteppingAction(), fEventAction(eventAction), fScoringVolume(0)
-{}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-NPSSteppingAction::~NPSSteppingAction()
-{}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void NPSSteppingAction::UserSteppingAction(const G4Step* step)
+NPSTrackerSD::NPSTrackerSD(const G4String& name,
+			   const G4String& hitsCollectionName) 
+ : G4VSensitiveDetector(name),
+   fHitsCollection(0), lastID(-1)
 {
-  // horrible hack: skip if particle is not a neutron
-  // (attempt to get more neutrons for the event generator test!)
-  /// if (step->GetTrack()->GetDefinition()->GetPDGEncoding()!=2112)     return;
-  ////
-  
-  G4LogicalVolume* volume =
- step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  collectionName.insert(hitsCollectionName);
+}
 
-  if (!fScoringVolume) { 
-    const NPSDetectorConstruction* detectorConstruction
-      = static_cast<const NPSDetectorConstruction*>
-        (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-    fScoringVolume = detectorConstruction->GetScoringVolume();   
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+NPSTrackerSD::~NPSTrackerSD() 
+{
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NPSTrackerSD::Initialize(G4HCofThisEvent* hce)
+{
+  // Create hits collection
+
+  fHitsCollection 
+    = new NPSTrackerHitsCollection(SensitiveDetectorName, collectionName[0]); 
+
+  // Add this collection in hce
+
+  G4int hcID 
+    = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
+  hce->AddHitsCollection( hcID, fHitsCollection ); 
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4bool NPSTrackerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+{  
+  NPSTrackerHit* newHit = new NPSTrackerHit();
+
+  G4int crtID=aStep->GetTrack()->GetTrackID();
+ 
+  // GN: We want only one hit in the beam pipe volume to store in the Ntuple
+  // at the end of the event. So add a new hit only when the old and new IDs
+  // differ.
+
+  if (crtID != lastID ) {
+    //    G4cout << "old and new IDs "<<lastID<<" "<<crtID<<G4endl;
+    lastID=aStep->GetTrack()->GetTrackID();
+    newHit->SetTrackID  (aStep->GetTrack()->GetTrackID());
+    newHit->SetID (aStep->GetTrack()->GetDynamicParticle()->GetPDGcode());
+    newHit->SetMom (aStep->GetTrack()->GetMomentum());
+    newHit->SetPos (aStep->GetPostStepPoint()->GetPosition());
+    fHitsCollection->insert( newHit );
+
   }
+  //newHit->Print();
 
-  // Check if we are in scoring volume.
-  if (volume != fScoringVolume) return;
+  return true;
+}
 
-  // Collect energy deposited in this step.
-  G4double edepStep = step->GetTotalEnergyDeposit();
-  fEventAction->AddEdep(edepStep);  
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-  //G4int ncol = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
-  //G4int nrow =step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
-  //G4int nh = step->GetPreStepPoint()->GetTouchableHandle()->GetHistoryDepth();
-  //  cout << "NPSSteppingAction::UserSteppingAction: ncol = " << ncol
-  //       << "  nrow = " << nrow << "  Edep = " << edepStep << G4endl;
-  //  cout << "  history depth = " << nh << G4endl;
-  //  getchar();
+void NPSTrackerSD::EndOfEvent(G4HCofThisEvent*)
+{
+  //  if ( verboseLevel>1 ) { 
+  //  G4int nofHits = fHitsCollection->entries();
+  //   G4cout << G4endl
+  //          << "-------->Hits Collection: in this event they are " << nofHits 
+  //          << " hits in the tracker chambers: " << G4endl;
+  //  for ( G4int i=0; i<nofHits; i++ ) (*fHitsCollection)[i]->delete();
+  //}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

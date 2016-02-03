@@ -7,7 +7,7 @@
   <constant name="PI" value="1.*pi"/>
   <constant name="TWOPI" value="2.*pi"/>
 
-  <constant name="NSEG" value="3"/>
+  <!-- constant name="NSEG" value="3"/ -->
 
   <quantity name="Dout_1" type="length" value="6.25" unit="cm"/>
   <quantity name="Dout_2" type="length" value="12.5" unit="cm"/>
@@ -67,8 +67,9 @@
    <materialref ref="Air"/>
    <solidref ref="BeamPipeBox"/>
 
-   <paramvol ncopies="NSEG">
-   <!-- paramvol ncopies="1" -->
+   <!-- this generates error message -->
+   <!-- paramvol ncopies="NSEG" -->
+   <paramvol ncopies="3">
     <volumeref ref="segment" />
 
     <parameterised_position_size>

@@ -161,7 +161,8 @@
   <volume name="ChamberVac">
    <materialref ref="Vaccuum"/>
    <solidref ref="v4"/>
-   <auxiliary auxtype="Color" auxvalue="yellow" />
+   <!-- this generates error message -->
+   <!-- auxiliary auxtype="Color" auxvalue="yellow"/ -->
 
    <physvol>
      <file name="nps_gdmls/target.gdml"/>

@@ -72,6 +72,11 @@
 int main(int argc,char** argv)
 {
 
+  cout << "==> NPS setup: argc = " << argc << endl;
+  for (int i=0; i<argc; i++) {
+    cout << "==>  argv " << i << " = " << argv[i] << endl;
+  }
+
 #ifdef G4UI_USE
 
   // Detect interactive mode (if no arguments) and define UI session
@@ -79,6 +84,7 @@ int main(int argc,char** argv)
   G4UIExecutive* ui = 0;
   if ( argc == 1 ) {
     ui = new G4UIExecutive(argc, argv);
+    cout << "==>  UI session defined." << endl;
   }
 
 #endif
@@ -115,8 +121,7 @@ int main(int argc,char** argv)
   parser.Read("nps_gdmls/nps_setup.gdml");
   runManager->SetUserInitialization(new NPSDetectorConstruction(
   				    parser.GetWorldVolume(),
-  				    parser.GetVolume("ChamberBody"),
-  				    parser.GetVolume("BeamPipeEnv")));
+  				    parser.GetVolume("Block")));
 
   // Example how to retrieve Auxiliary Information
 
@@ -284,6 +289,7 @@ int main(int argc,char** argv)
   // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
   // G4VisManager* visManager = new G4VisExecutive("Quiet");
   visManager->Initialize();
+  cout << "==>  VisManager defined & initialized." << endl;
 #endif
     
   // Get the pointer to the User Interface manager
@@ -303,8 +309,10 @@ int main(int argc,char** argv)
 
 #ifdef G4VIS_USE
     UImanager->ApplyCommand("/control/execute init_vis.mac"); 
+    cout << "==>  init_vis.mac executed." << endl;
 #else
     UImanager->ApplyCommand("/control/execute init.mac"); 
+    cout << "==>  init.mac executed." << endl;
 #endif
 
     if (ui->IsGUI()) {
@@ -313,6 +321,7 @@ int main(int argc,char** argv)
 
     // start interactive session
     ui->SessionStart();
+    cout << "==>  UI session started." << endl;
     delete ui;
 
 #endif

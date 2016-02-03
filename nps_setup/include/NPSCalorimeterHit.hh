@@ -24,69 +24,73 @@
 // ********************************************************************
 //
 
-#ifndef NPSDetectorConstruction_h
-#define NPSDetectorConstruction_h 1
+#ifndef NPSCalorimeterHit_h
+#define NPSCalorimeterHit_h 1
 
-#include "globals.hh"
-#include "SimpleField.hh"
-#include "G4VUserDetectorConstruction.hh"
+#include "G4VHit.hh"
+#include "G4THitsCollection.hh"
+#include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolumeStore.hh"
+#include "tls.hh"
 
-// attempt to use the GDML parser
-#include <vector>
-#include "G4GDMLParser.hh"
+class NPSCalorimeterHit : public G4VHit {
 
-class G4LogicalVolumeStore;
-class G4LogicalVolume;
-class G4VPhysicalVolume;
-class G4Material;
-class G4Mag_UsualEqRhs;
-class G4MagIntegratorStepper;
-class G4ChordFinder;
-class G4UniformMagField;
-class G4UserLimits;
-
-/// Detector construction class to define materials and geometry.
-
-class NPSDetectorConstruction : public G4VUserDetectorConstruction
-{
 public:
-  NPSDetectorConstruction();
-  NPSDetectorConstruction(G4VPhysicalVolume *aworld,
-			  G4LogicalVolume *scoring)
-  {
-    G4cout << "We are using GDML..."<<G4endl;
-    physWorld =  aworld;
-    fScoringVolume = scoring;
-  };
-  
-  virtual ~NPSDetectorConstruction();
 
-  virtual G4VPhysicalVolume* Construct();
-  virtual void ConstructSDandField();
-  G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
+  NPSCalorimeterHit();
+  NPSCalorimeterHit(const NPSCalorimeterHit&);
+  NPSCalorimeterHit(G4int& col, G4int& row, G4int& charge, G4double& edep,
+		    G4ThreeVector& pos);
+  virtual ~NPSCalorimeterHit();
   
-protected:
-  G4LogicalVolume*  fScoringVolume;
-
+  // operators
+  const NPSCalorimeterHit& operator=(const NPSCalorimeterHit&);
+  G4int operator==(const NPSCalorimeterHit&) const;
+  
+  inline void* operator new(size_t);
+  inline void  operator delete(void*);
+  
+  // methods from base class
+  virtual void Draw();
+  virtual void Print();
+  
+  // Get methods
+  G4int GetCol() const { return fCol; };
+  G4int GetRow() const { return fRow; };
+  G4int GetCharge() const { return fCharge; };
+  G4double GetEdep() const { return fEdep; };
+  G4ThreeVector GetPos() const { return fPos; };
+  
 private:
-
-  void ConstructField();
   
-  SimpleField *fField;
-  ////G4UniformMagField *fField;
-  G4Mag_UsualEqRhs *fEquation;
-  G4double minStepMagneticField;
-  G4MagIntegratorStepper* fStepper;
-  G4ChordFinder*          fChordFinder;
-
-  G4VPhysicalVolume* physWorld;
-
-  G4UserLimits* fStepLimit;            // pointer to user step limits
-
+  G4int         fCol;
+  G4int         fRow;
+  G4int         fCharge;
+  G4double      fEdep;
+  G4ThreeVector fPos;
 };
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+typedef G4THitsCollection<NPSCalorimeterHit> NPSCalorimeterHitsCollection;
+
+extern G4ThreadLocal G4Allocator<NPSCalorimeterHit>* NPSCalorimeterHitAllocator;
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+inline void* NPSCalorimeterHit::operator new(size_t)
+{
+  if(!NPSCalorimeterHitAllocator)
+    NPSCalorimeterHitAllocator = new G4Allocator<NPSCalorimeterHit>;
+  return (void *) NPSCalorimeterHitAllocator->MallocSingle();
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+inline void NPSCalorimeterHit::operator delete(void *hit)
+{
+  NPSCalorimeterHitAllocator->FreeSingle((NPSCalorimeterHit*) hit);
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

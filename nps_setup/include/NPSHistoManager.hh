@@ -50,9 +50,8 @@ public:
   void FillHisto(G4int id, G4double bin, G4double weight = 1.0);
   void Normalize(G4int id, G4double fac);    
 
-  void FillNtuple(G4int event, G4int ntrack, G4int trackid, G4int id,
-		  G4ThreeVector pos, G4ThreeVector mom,
-		  G4int aVol, G4double aDist, G4double aKE);
+  void FillNtuple(G4int col, G4int row, G4int charge, G4double edep,
+		  G4ThreeVector pos);
 
   void PrintStatistic();
         
@@ -63,13 +62,18 @@ private:
   TH1D*    fHisto[MaxHisto];            
   TTree*   fNtuple;
 
-  G4int fEvent, fNtrack, fTrackID, fID, fVol;
-  G4double fX, fY, fZ;
-  G4double fPx, fPy, fPz;
-  G4double fDist, fKE;
+  //  G4int fEvent, fNtrack, fTrackID, fID, fVol;
+  //  G4double fX, fY, fZ;
+  //  G4double fPx, fPy, fPz;
+  //  G4double fDist, fKE;
+  G4int         fCol;
+  G4int         fRow;
+  G4int         fCharge;
+  G4double      fEdep;
+  G4double      fX, fY, fZ;
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-

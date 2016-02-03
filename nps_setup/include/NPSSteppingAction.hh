@@ -50,10 +50,6 @@ private:
 
   NPSEventAction*  fEventAction;
   G4LogicalVolume* fScoringVolume;
-  G4int lastTrackID, lastTrackPID;
-  G4ThreeVector initPoint;
-  G4String crtVolName;
-  G4int crtVolNo;
 
 };
 

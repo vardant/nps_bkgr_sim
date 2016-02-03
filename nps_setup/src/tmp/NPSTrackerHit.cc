@@ -24,63 +24,89 @@
 // ********************************************************************
 //
 
-#include "NPSSteppingAction.hh"
-#include "NPSEventAction.hh"
-#include "NPSDetectorConstruction.hh"
+#include "NPSTrackerHit.hh"
+#include "G4UnitsTable.hh"
+#include "G4VVisManager.hh"
+#include "G4Circle.hh"
+#include "G4Colour.hh"
+#include "G4VisAttributes.hh"
 
-#include "globals.hh"
-#include "G4Step.hh"
-#include "G4Event.hh"
-#include "G4RunManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4ThreeVector.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4UIcommand.hh"
+#include <iomanip>
+
+G4ThreadLocal G4Allocator<NPSTrackerHit>* NPSTrackerHitAllocator=0;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NPSSteppingAction::NPSSteppingAction(NPSEventAction* eventAction)
-: G4UserSteppingAction(), fEventAction(eventAction), fScoringVolume(0)
+NPSTrackerHit::NPSTrackerHit()
+ : G4VHit(),
+   fTrackID(-1),
+   fID(-1),
+   fMom(G4ThreeVector()),
+   fPos(G4ThreeVector())
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NPSSteppingAction::~NPSSteppingAction()
-{}
+NPSTrackerHit::~NPSTrackerHit() {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NPSSteppingAction::UserSteppingAction(const G4Step* step)
+NPSTrackerHit::NPSTrackerHit(const NPSTrackerHit& right)
+  : G4VHit()
 {
-  // horrible hack: skip if particle is not a neutron
-  // (attempt to get more neutrons for the event generator test!)
-  /// if (step->GetTrack()->GetDefinition()->GetPDGEncoding()!=2112)     return;
-  ////
-  
-  G4LogicalVolume* volume =
- step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  fTrackID   = right.fTrackID;
+  fID        = right.fID;
+  fMom       = right.fMom;
+  fPos       = right.fPos;
+}
 
-  if (!fScoringVolume) { 
-    const NPSDetectorConstruction* detectorConstruction
-      = static_cast<const NPSDetectorConstruction*>
-        (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-    fScoringVolume = detectorConstruction->GetScoringVolume();   
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+const NPSTrackerHit& NPSTrackerHit::operator=(const NPSTrackerHit& right)
+{
+  fTrackID   = right.fTrackID;
+  fID        = right.fID;
+  fMom       = right.fMom;
+  fPos       = right.fPos;
+
+  return *this;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4int NPSTrackerHit::operator==(const NPSTrackerHit& right) const
+{
+  return ( this == &right ) ? 1 : 0;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NPSTrackerHit::Draw()
+{
+  G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
+  if(pVVisManager)
+  {
+    G4Circle circle(fPos);
+    circle.SetScreenSize(4.);
+    circle.SetFillStyle(G4Circle::filled);
+    G4Colour colour(1.,0.,0.);
+    G4VisAttributes attribs(colour);
+    circle.SetVisAttributes(attribs);
+    pVVisManager->Draw(circle);
   }
+}
 
-  // Check if we are in scoring volume.
-  if (volume != fScoringVolume) return;
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-  // Collect energy deposited in this step.
-  G4double edepStep = step->GetTotalEnergyDeposit();
-  fEventAction->AddEdep(edepStep);  
-
-  //G4int ncol = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
-  //G4int nrow =step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
-  //G4int nh = step->GetPreStepPoint()->GetTouchableHandle()->GetHistoryDepth();
-  //  cout << "NPSSteppingAction::UserSteppingAction: ncol = " << ncol
-  //       << "  nrow = " << nrow << "  Edep = " << edepStep << G4endl;
-  //  cout << "  history depth = " << nh << G4endl;
-  //  getchar();
+void NPSTrackerHit::Print()
+{
+  G4cout
+    << "  trackID= " << fTrackID << " ID = " << fID << G4endl;
+    //     << "Edep: "
+    // << std::setw(7) << G4BestUnit(fEdep,"Energy")
+    // << " Position: "
+    // << std::setw(7) << G4BestUnit( fPos,"Length")
+  //     << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

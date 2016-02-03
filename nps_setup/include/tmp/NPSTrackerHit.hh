@@ -24,63 +24,80 @@
 // ********************************************************************
 //
 
-#include "NPSSteppingAction.hh"
-#include "NPSEventAction.hh"
-#include "NPSDetectorConstruction.hh"
+#ifndef NPSTrackerHit_h
+#define NPSTrackerHit_h 1
 
-#include "globals.hh"
-#include "G4Step.hh"
-#include "G4Event.hh"
-#include "G4RunManager.hh"
-#include "G4LogicalVolume.hh"
+#include "G4VHit.hh"
+#include "G4THitsCollection.hh"
+#include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4UIcommand.hh"
+#include "tls.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// Tracker hit class for the beam pipe.
+// It defines data members to store the trackID, particle id,
+//  Momentum and position - fTrackID, fID, fMom, fPos.
 
-NPSSteppingAction::NPSSteppingAction(NPSEventAction* eventAction)
-: G4UserSteppingAction(), fEventAction(eventAction), fScoringVolume(0)
-{}
+class NPSTrackerHit : public G4VHit {
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+public:
 
-NPSSteppingAction::~NPSSteppingAction()
-{}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void NPSSteppingAction::UserSteppingAction(const G4Step* step)
-{
-  // horrible hack: skip if particle is not a neutron
-  // (attempt to get more neutrons for the event generator test!)
-  /// if (step->GetTrack()->GetDefinition()->GetPDGEncoding()!=2112)     return;
-  ////
+  NPSTrackerHit();
+  NPSTrackerHit(const NPSTrackerHit&);
+  virtual ~NPSTrackerHit();
   
-  G4LogicalVolume* volume =
- step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  // operators
+  const NPSTrackerHit& operator=(const NPSTrackerHit&);
+  G4int operator==(const NPSTrackerHit&) const;
+  
+  inline void* operator new(size_t);
+  inline void  operator delete(void*);
+  
+  // methods from base class
+  virtual void Draw();
+  virtual void Print();
+  
+  // Set methods
+  void SetTrackID  (G4int track)      { fTrackID = track; };
+  void SetID       (G4int id)         { fID = id; };
+  void SetMom      (G4ThreeVector mom){ fMom = mom; };
+  void SetPos      (G4ThreeVector xyz){ fPos = xyz; };
+  
+  // Get methods
+  G4int GetTrackID() const     { return fTrackID; };
+  G4int GetID() const   { return fID; };
+  G4ThreeVector GetMom() const { return fMom; };
+  G4ThreeVector GetPos() const { return fPos; };
+  
+private:
+  
+  G4int         fTrackID;
+  G4int         fID;
+  G4ThreeVector fMom;
+  G4ThreeVector fPos;
+};
 
-  if (!fScoringVolume) { 
-    const NPSDetectorConstruction* detectorConstruction
-      = static_cast<const NPSDetectorConstruction*>
-        (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-    fScoringVolume = detectorConstruction->GetScoringVolume();   
-  }
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-  // Check if we are in scoring volume.
-  if (volume != fScoringVolume) return;
+typedef G4THitsCollection<NPSTrackerHit> NPSTrackerHitsCollection;
 
-  // Collect energy deposited in this step.
-  G4double edepStep = step->GetTotalEnergyDeposit();
-  fEventAction->AddEdep(edepStep);  
+extern G4ThreadLocal G4Allocator<NPSTrackerHit>* NPSTrackerHitAllocator;
 
-  //G4int ncol = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
-  //G4int nrow =step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
-  //G4int nh = step->GetPreStepPoint()->GetTouchableHandle()->GetHistoryDepth();
-  //  cout << "NPSSteppingAction::UserSteppingAction: ncol = " << ncol
-  //       << "  nrow = " << nrow << "  Edep = " << edepStep << G4endl;
-  //  cout << "  history depth = " << nh << G4endl;
-  //  getchar();
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+inline void* NPSTrackerHit::operator new(size_t)
+{
+  if(!NPSTrackerHitAllocator)
+    NPSTrackerHitAllocator = new G4Allocator<NPSTrackerHit>;
+  return (void *) NPSTrackerHitAllocator->MallocSingle();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+inline void NPSTrackerHit::operator delete(void *hit)
+{
+  NPSTrackerHitAllocator->FreeSingle((NPSTrackerHit*) hit);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#endif

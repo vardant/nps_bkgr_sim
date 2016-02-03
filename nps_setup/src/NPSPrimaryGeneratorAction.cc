@@ -36,13 +36,11 @@
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NPSPrimaryGeneratorAction::NPSPrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),
   fParticleGun(0), fX0(0), fY0(0), fZ0(0), fBeamRadius(0)
-  //,  fEnvelopeBox(0)
 {
   G4int n_particle = 1;
   fParticleGun  = new G4ParticleGun(n_particle);
@@ -60,7 +58,7 @@ NPSPrimaryGeneratorAction::NPSPrimaryGeneratorAction()
 
   file.close();
 
-  fBeamRadius=fBeamRadius;
+  //  fBeamRadius=fBeamRadius;
   fBeamEnergy=fBeamEnergy*MeV;
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
@@ -68,9 +66,9 @@ NPSPrimaryGeneratorAction::NPSPrimaryGeneratorAction()
 
   // Keep human informed
 
-  G4cout << "----> Beam of " << fBeamEnergy << " MeV and radius "
+  G4cout << "====> Beam of " << fBeamEnergy << " MeV and radius "
 	 << fBeamRadius << " starting at " << fX0 << " " << fY0 << " " << fZ0
-	 << " <----" << G4endl;
+	 << " <====" << G4endl;
 
 }
 
@@ -86,7 +84,6 @@ NPSPrimaryGeneratorAction::~NPSPrimaryGeneratorAction()
 void NPSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // This function is called at the begining of each event.
-
   // We want to place the particle gun just before the Radiator
 
    G4double x=100,y=100,z;
@@ -95,7 +92,7 @@ void NPSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     x=2.*fBeamRadius*(G4UniformRand()-.5);
     y=2.*fBeamRadius*(G4UniformRand()-.5);
     //   G4cout << x << " "<<y<<" "<<sqrt(x*x+y*y)<<" "<<fBeamRadius<<G4endl;
-  } while (sqrt(x*x+y*y)> fBeamRadius);
+  } while (sqrt(x*x+y*y) > fBeamRadius);
 
   x=(fX0+x)*cm;
   y=(fY0+y)*cm;
@@ -106,4 +103,3 @@ void NPSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-

@@ -28,7 +28,7 @@
 #include "NPSRun.hh"
 #include "NPSRunAction.hh"
 #include "NPSHistoManager.hh"
-#include "NPSTrackerHit.hh"
+#include "NPSCalorimeterHit.hh"
 
 #include "G4Event.hh"
 #include "G4RunManager.hh"
@@ -46,8 +46,11 @@
 
 NPSEventAction::NPSEventAction(NPSHistoManager *histo)
   : G4UserEventAction(), fHistoManager(histo), fPrintModulo(0),
-    fEdep(0.), fBeamPipeCollID(-1), fEvtNo(-1)
-{ fPrintModulo = 100000; } 
+    fEdep(0.), fCalorimeterCollID(-1), fEvtNo(-1)
+{
+  //  fPrintModulo = 100000;
+  fPrintModulo = 1;
+} 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -59,16 +62,16 @@ NPSEventAction::~NPSEventAction()
 void NPSEventAction::BeginOfEventAction(const G4Event* evt)
 {
   fEvtNo = evt->GetEventID();
-  //  if (fEvtNo%fPrintModulo == 0) G4cout << "\n---> Begin of event: "
-  //				       << fEvtNo << G4endl;
   if (fEvtNo%fPrintModulo == 0)     G4cout << "event: " << fEvtNo << G4endl;
 
   G4SDManager * SDman = G4SDManager::GetSDMpointer();
 
-  if(fBeamPipeCollID<0)
+  if(fCalorimeterCollID<0)
   {
-    G4String colNam;
-    fBeamPipeCollID = SDman->GetCollectionID(colNam="BeamPipeHitsCollection");
+    //    G4String colNam;
+    //    fCalorimeterCollID = 
+    //      SDman->GetCollectionID(colNam="CalorimeterHitsCollection");
+    fCalorimeterCollID = SDman->GetCollectionID("CalorimeterHitsCollection");
   }
 
   // initialization of per event quantities
@@ -84,6 +87,50 @@ void NPSEventAction::EndOfEventAction(const G4Event* event)
 		       G4RunManager::GetRunManager()->GetNonConstCurrentRun() );
   run->AddEdep(fEdep);
 
+  // Fill histogram with event's energy deposition.
+  fHistoManager->FillHisto(1, fEdep/MeV);
+
+  // get number of stored trajectories
+
+  G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer();
+  G4int n_trajectories = 0;
+  if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
+
+  //  G4cout << "NPSEventAction::EndOfEventAction: n_trajectories = " 
+  //	 << n_trajectories << G4endl;
+  //  getchar();
+
+  // periodic printing
+  //G4int eventID = event->GetEventID();
+
+  // Hit collection for this event.
+
+  G4HCofThisEvent * HCE = event->GetHCofThisEvent();
+  NPSCalorimeterHitsCollection* CC = 0;
+  if(HCE) {
+    CC = (NPSCalorimeterHitsCollection*)(HCE->GetHC(fCalorimeterCollID));
+    //    G4cout << "  Found hit collection." << G4endl;
+  }
+
+  if(CC) {
+    int n_hit = CC->entries();
+    //    G4cout << "  n_hit = " << n_hit << G4endl;
+
+    for(int i=0;i<n_hit;i++) {
+      G4int col =(*CC)[i]->GetCol();
+      G4int row =(*CC)[i]->GetRow();
+      G4int charge =(*CC)[i]->GetCharge();
+      G4double edep=(*CC)[i]->GetEdep();
+      G4ThreeVector pos=(*CC)[i]->GetPos();
+      fHistoManager->FillNtuple(col, row, charge, edep/MeV, pos);
+    }
+
+    //    getchar();
+  }
+
+
+  //---------------------------------------------------------------------------
+
   // Add the primary vertex for safe keeping
   //
   // temporarily remove to get more neutron hits for the event generator
@@ -91,14 +138,12 @@ void NPSEventAction::EndOfEventAction(const G4Event* event)
   /*
   G4int eventID = event->GetEventID();
   fHistoManager->FillNtuple(eventID,
-			    0,
-			    event->GetPrimaryVertex()->GetPrimary(0)->GetTrackID(),
-			    event->GetPrimaryVertex()->GetPrimary(0)->GetPDGcode(),
-			    event->GetPrimaryVertex()->GetPosition(),
-			    event->GetPrimaryVertex()->GetPrimary(0)->GetMomentum(),-1, -1.,-1.);
+    0,
+    event->GetPrimaryVertex()->GetPrimary(0)->GetTrackID(),
+    event->GetPrimaryVertex()->GetPrimary(0)->GetPDGcode(),
+    event->GetPrimaryVertex()->GetPosition(),
+    event->GetPrimaryVertex()->GetPrimary(0)->GetMomentum(),-1, -1.,-1.);
   */
-
-
 
   //
   // get number of stored trajectories

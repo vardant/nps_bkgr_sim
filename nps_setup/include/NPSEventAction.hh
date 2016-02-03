@@ -51,8 +51,8 @@ public:
 private:
   G4double  fEdep;
   NPSHistoManager *fHistoManager;
-  G4int     fPrintModulo;
-  G4int fBeamPipeCollID;
+  G4int fPrintModulo;
+  G4int fCalorimeterCollID;
   G4int fEvtNo;
 };
 

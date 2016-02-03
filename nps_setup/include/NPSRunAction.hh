@@ -50,7 +50,6 @@ public:
   virtual G4Run* GenerateRun();
   virtual void BeginOfRunAction(const G4Run*);
   virtual void   EndOfRunAction(const G4Run*);
-  void fillPerEvent(G4double, G4double, G4double, G4double);
 
 private:
 
@@ -62,4 +61,3 @@ private:
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-

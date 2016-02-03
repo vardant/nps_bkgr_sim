@@ -72,15 +72,6 @@ G4Run* NPSRunAction::GenerateRun()
 
 void NPSRunAction::BeginOfRunAction(const G4Run*)
 { 
-  //initialize cumulative quantities
-
-  //  fSumEAbs = fSum2EAbs =fSumEGap = fSum2EGap = 0.;
-  //  fSumLAbs = fSum2LAbs =fSumLGap = fSum2LGap = 0.;
-  
-  //inform the runManager to save random number seed
-  //  G4RunManager::GetRunManager()->SetRandomNumberStore(false);
-  //  G4RunManager::GetRunManager()->SetRandomNumberStoreDir("random/");
- 
   if (fAutoSeed) {
     // automatic (time-based) random seeds for each run
     G4cout << "*******************" << G4endl;
@@ -96,31 +87,9 @@ void NPSRunAction::BeginOfRunAction(const G4Run*)
     G4Random::showEngineStatus();
   }
 
-  /*
-  if (fSaveRndm > 0)    {
-    std::ostringstream os;
-    os<<"beginOfRun_"<<G4Threading::G4GetThreadId()<<".rndm";
-    G4Random::saveEngineStatus(os.str().c_str());
-  }
-  */
-
   //histograms
 
   fHistoManager->book(); 
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void NPSRunAction::fillPerEvent(G4double EAbs, G4double EGap,
-                                  G4double LAbs, G4double LGap)
-{
-  //accumulate statistic
-  //
-  //  fSumEAbs += EAbs;  fSum2EAbs += EAbs*EAbs;
-  //fSumEGap += EGap;  fSum2EGap += EGap*EGap;
-  
-  //fSumLAbs += LAbs;  fSum2LAbs += LAbs*LAbs;
-  //fSumLGap += LGap;  fSum2LGap += LGap*LGap;  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -130,21 +99,6 @@ void NPSRunAction::EndOfRunAction(const G4Run* run)
   G4int nofEvents = run->GetNumberOfEvent();
   if (nofEvents == 0) return;
 
-  //compute statistics: mean and rms
-  //
-  ///fSumEAbs /= NbOfEvents; fSum2EAbs /= NbOfEvents;
-  ///G4double rmsEAbs = fSum2EAbs - fSumEAbs*fSumEAbs;
-  ///if (rmsEAbs >0.) rmsEAbs = std::sqrt(rmsEAbs); else rmsEAbs = 0.;
-  //print
-  //
-  //  G4cout
-  //   << "\n--------------------End of Run------------------------------\n"
-  //   << "\n mean Energy in Absorber : " << G4BestUnit(fSumEAbs,"Energy")
-  //   << " +- "                          << G4BestUnit(rmsEAbs,"Energy")  
-  //   << "\n mean Energy in Gap      : " << G4BestUnit(fSumEGap,"Energy")
-  //   << " +- "                          << G4BestUnit(rmsEGap,"Energy")
-  //   << G4endl;
-  
   const NPSRun* b1Run = static_cast<const NPSRun*>(run);
 
   // Compute dose
@@ -199,6 +153,10 @@ void NPSRunAction::EndOfRunAction(const G4Run* run)
      << G4endl
      << " Dose in scoring volume : " 
      << G4BestUnit(dose,"Dose") << " +- " << G4BestUnit(rmsDose,"Dose")
+     << G4endl
+     << "    Deposited energy = " << G4BestUnit(edep,"Energy")
+     << G4endl
+     << "    Mass             = " << G4BestUnit(mass,"Mass")
      << G4endl
      << "------------------------------------------------------------"
      << G4endl
