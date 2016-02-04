@@ -50,7 +50,7 @@ public:
   void FillHisto(G4int id, G4double bin, G4double weight = 1.0);
   void Normalize(G4int id, G4double fac);    
 
-  void FillNtuple(G4int col, G4int row, G4int charge, G4double edep,
+  void FillNtuple(G4int col, G4int row, G4int pid, G4double edep,
 		  G4ThreeVector pos);
 
   void PrintStatistic();
@@ -68,7 +68,7 @@ private:
   //  G4double fDist, fKE;
   G4int         fCol;
   G4int         fRow;
-  G4int         fCharge;
+  G4int         fPID;
   G4double      fEdep;
   G4double      fX, fY, fZ;
 

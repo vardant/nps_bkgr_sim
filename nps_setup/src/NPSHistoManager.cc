@@ -40,7 +40,7 @@ NPSHistoManager::NPSHistoManager()
   :fRootFile(0), fNtuple(0),
    //   fEvent(-1), fTrackID(-1), fID(-1), fX(0), fY(0), fZ(0),
    //   fPx(0), fPy(0), fPz(0), fDist(0), fKE(0), fVol(-1)
-   fCol(-1), fRow(-1), fCharge(-999), fEdep(-1.), fX(0), fY(0), fZ(0)
+   fCol(-1), fRow(-1), fPID(0), fEdep(-1.), fX(0), fY(0), fZ(0)
 {
   fRootFileName="nps_setup.root";
   // histogram(s)
@@ -56,7 +56,7 @@ NPSHistoManager::NPSHistoManager(char *aname)
 :fRootFile(0), fNtuple(0),
  // fEvent(-1), fTrackID(-1), fID(-1), fX(0), fY(0), fZ(0),
  // fPx(0), fPy(0), fPz(0), fDist(0), fKE(0), fVol(-1)
- fCol(-1), fRow(-1), fCharge(-999), fEdep(-1.), fX(0), fY(0), fZ(0)
+ fCol(-1), fRow(-1), fPID(0), fEdep(-1.), fX(0), fY(0), fZ(0)
 {
   fRootFileName=aname;  
   // histogram(s)
@@ -122,7 +122,7 @@ void NPSHistoManager::book()
  */
  fNtuple->Branch("col", &fCol, "col/I");
  fNtuple->Branch("row", &fRow, "row/I");
- fNtuple->Branch("charge", &fCharge, "charge/I");
+ fNtuple->Branch("pid", &fPID, "pid/I");
  fNtuple->Branch("edep", &fEdep, "Edep/D");
  fNtuple->Branch("x", &fX, "x/D");
  fNtuple->Branch("y", &fY, "y/D");
@@ -173,7 +173,7 @@ void NPSHistoManager::Normalize(G4int ih, G4double fac)
 //G4ThreeVector mom, G4int aVol, G4double aDist,
 //G4double aKE)
 
-void NPSHistoManager::FillNtuple(G4int col, G4int row, G4int charge,
+void NPSHistoManager::FillNtuple(G4int col, G4int row, G4int pid,
 				 G4double edep,  G4ThreeVector pos)
 {
 
@@ -198,7 +198,7 @@ void NPSHistoManager::FillNtuple(G4int col, G4int row, G4int charge,
   //  fKE=aKE;
   fCol = col;
   fRow = row;
-  fCharge = charge;
+  fPID = pid;
   fEdep = edep;
   fX=pos.getX();
   fY=pos.getY();

@@ -119,10 +119,10 @@ void NPSEventAction::EndOfEventAction(const G4Event* event)
     for(int i=0;i<n_hit;i++) {
       G4int col =(*CC)[i]->GetCol();
       G4int row =(*CC)[i]->GetRow();
-      G4int charge =(*CC)[i]->GetCharge();
+      G4int pid =(*CC)[i]->GetPID();
       G4double edep=(*CC)[i]->GetEdep();
       G4ThreeVector pos=(*CC)[i]->GetPos();
-      fHistoManager->FillNtuple(col, row, charge, edep/MeV, pos);
+      fHistoManager->FillNtuple(col, row, pid, edep/MeV, pos);
     }
 
     //    getchar();

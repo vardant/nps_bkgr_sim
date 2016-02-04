@@ -75,11 +75,11 @@ G4bool NPSCalorimeterSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
   G4int col = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
   G4int row = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber(1);
-  G4int charge = step->GetTrack()->GetDynamicParticle()->GetCharge();
+  G4int pid = step->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4double edep = step->GetTotalEnergyDeposit();
   G4ThreeVector pos = step->GetPreStepPoint()->GetPosition();
 
-  NPSCalorimeterHit* hit = new NPSCalorimeterHit(col, row, charge, edep, pos);
+  NPSCalorimeterHit* hit = new NPSCalorimeterHit(col, row, pid, edep, pos);
   fHitsCollection->insert( hit );
   //  hit->Print();
   //  getchar();

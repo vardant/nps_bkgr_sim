@@ -38,7 +38,7 @@ G4ThreadLocal G4Allocator<NPSCalorimeterHit>* NPSCalorimeterHitAllocator=0;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NPSCalorimeterHit::NPSCalorimeterHit() : G4VHit(),
-	 fCol(-1), fRow(-1), fCharge(9), fEdep(999999.), fPos(G4ThreeVector())
+	 fCol(-1), fRow(-1), fPID(0), fEdep(999999.), fPos(G4ThreeVector())
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -51,18 +51,18 @@ NPSCalorimeterHit::NPSCalorimeterHit(const NPSCalorimeterHit& right) : G4VHit()
 {
   fCol    = right.fCol;
   fRow    = right.fRow;
-  fCharge = right.fCharge;
+  fPID    = right.fPID;
   fEdep   = right.fEdep;
   fPos    = right.fPos;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NPSCalorimeterHit::NPSCalorimeterHit(G4int& col, G4int& row, G4int& charge,
+NPSCalorimeterHit::NPSCalorimeterHit(G4int& col, G4int& row, G4int& pid,
 				     G4double& edep, G4ThreeVector& pos) {
   fCol    = col;
   fRow    = row;
-  fCharge = charge;
+  fPID    = pid;
   fEdep   = edep;
   fPos    = pos;
 }
@@ -74,7 +74,7 @@ NPSCalorimeterHit::operator=(const NPSCalorimeterHit& right)
 {
   fCol    = right.fCol;
   fRow    = right.fRow;
-  fCharge = right.fCharge;
+  fPID    = right.fPID;
   fEdep   = right.fEdep;
   fPos    = right.fPos;
   return *this;
@@ -109,7 +109,7 @@ void NPSCalorimeterHit::Draw()
 void NPSCalorimeterHit::Print()
 {
   G4cout << "NPSCalorimeterHit: col = " << fCol << "  row = " << fRow
-	 << "  charge = " << fCharge << "  Edep = " << fEdep << G4endl;
+	 << "  particle id = " << fPID << "  Edep = " << fEdep << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

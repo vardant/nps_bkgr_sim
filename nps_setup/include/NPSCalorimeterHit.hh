@@ -39,7 +39,7 @@ public:
 
   NPSCalorimeterHit();
   NPSCalorimeterHit(const NPSCalorimeterHit&);
-  NPSCalorimeterHit(G4int& col, G4int& row, G4int& charge, G4double& edep,
+  NPSCalorimeterHit(G4int& col, G4int& row, G4int& pid, G4double& edep,
 		    G4ThreeVector& pos);
   virtual ~NPSCalorimeterHit();
   
@@ -57,7 +57,7 @@ public:
   // Get methods
   G4int GetCol() const { return fCol; };
   G4int GetRow() const { return fRow; };
-  G4int GetCharge() const { return fCharge; };
+  G4int GetPID() const { return fPID; };
   G4double GetEdep() const { return fEdep; };
   G4ThreeVector GetPos() const { return fPos; };
   
@@ -65,7 +65,7 @@ private:
   
   G4int         fCol;
   G4int         fRow;
-  G4int         fCharge;
+  G4int         fPID;
   G4double      fEdep;
   G4ThreeVector fPos;
 };
