@@ -38,9 +38,8 @@
 
 NPSHistoManager::NPSHistoManager()
   :fRootFile(0), fNtuple(0),
-   //   fEvent(-1), fTrackID(-1), fID(-1), fX(0), fY(0), fZ(0),
-   //   fPx(0), fPy(0), fPz(0), fDist(0), fKE(0), fVol(-1)
-   fCol(-1), fRow(-1), fPID(0), fEdep(-1.), fX(0), fY(0), fZ(0)
+   fCol(-1), fRow(-1), fPID(0), fEventID(-1), fEdep(-1.)
+   //   fCol(-1), fRow(-1), fPID(0), fEdep(-1.), fX(0), fY(0), fZ(0)
 {
   fRootFileName="nps_setup.root";
   // histogram(s)
@@ -54,9 +53,8 @@ NPSHistoManager::NPSHistoManager()
 
 NPSHistoManager::NPSHistoManager(char *aname)
 :fRootFile(0), fNtuple(0),
- // fEvent(-1), fTrackID(-1), fID(-1), fX(0), fY(0), fZ(0),
- // fPx(0), fPy(0), fPz(0), fDist(0), fKE(0), fVol(-1)
- fCol(-1), fRow(-1), fPID(0), fEdep(-1.), fX(0), fY(0), fZ(0)
+ fCol(-1), fRow(-1), fPID(0), fEventID(-1), fEdep(-1.)
+ // fCol(-1), fRow(-1), fPID(0), fEdep(-1.), fX(0), fY(0), fZ(0)
 {
   fRootFileName=aname;  
   // histogram(s)
@@ -98,35 +96,14 @@ void NPSHistoManager::book()
  // create an ntuple in subdirectory "tuples"
  //
  fNtuple = new TTree("rem", "rem");
- /*
- fNtuple->Branch("event", &fEvent, "event/I");
- fNtuple->Branch("track", &fTrackID, "track/I");
- fNtuple->Branch("ID", &fID, "ID/I");
- fNtuple->Branch("x", &fX, "x/D");
- fNtuple->Branch("y", &fY, "y/D");
- fNtuple->Branch("z", &fZ, "z/D");
- fNtuple->Branch("px", &fPx, "px/D");
- fNtuple->Branch("py", &fPy, "py/D");
- fNtuple->Branch("pz", &fPz, "pz/D");
- fNtuple->Branch("vol", &fVol, "vol/I");
- fNtuple->Branch("dist", &fDist, "dist/D");
- fNtuple->Branch("KE", &fKE, "KE/D");
- */
- /* 
- fNtuple2 = new TTree("rem", "rem");
- fNtuple2->Branch("event", &fEvent, "event/I");
- fNtuple2->Branch("vol", &fNtrack, "vol/I"); ???
- fNtuple2->Branch("ID", &fID, "ID/I");
- fNtuple2->Branch("dist", &fDist, "dist/D");
- fNtuple2->Branch("KE", &fKE, "KE/D");
- */
  fNtuple->Branch("col", &fCol, "col/I");
  fNtuple->Branch("row", &fRow, "row/I");
  fNtuple->Branch("pid", &fPID, "pid/I");
+ fNtuple->Branch("evid", &fEventID, "evid/I");
  fNtuple->Branch("edep", &fEdep, "Edep/D");
- fNtuple->Branch("x", &fX, "x/D");
- fNtuple->Branch("y", &fY, "y/D");
- fNtuple->Branch("z", &fZ, "z/D");
+ // fNtuple->Branch("x", &fX, "x/D");
+ // fNtuple->Branch("y", &fY, "y/D");
+ // fNtuple->Branch("z", &fZ, "z/D");
  G4cout << "\n----> Root file is opened in " << fRootFileName << G4endl;
 }
 
@@ -168,41 +145,18 @@ void NPSHistoManager::Normalize(G4int ih, G4double fac)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-//void NPSHistoManager::FillNtuple(G4int anEvent, G4int nTrack, G4int aTrackID,
-//G4int aID,  G4ThreeVector pos,
-//G4ThreeVector mom, G4int aVol, G4double aDist,
-//G4double aKE)
-
-void NPSHistoManager::FillNtuple(G4int col, G4int row, G4int pid,
-				 G4double edep,  G4ThreeVector pos)
+void NPSHistoManager::FillNtuple(G4int col, G4int row, G4int pid, G4int eventid,
+				 G4double edep)
+				 //G4double edep,  G4ThreeVector pos)
 {
-
-  //  fEvent=anEvent;
-  //  fNtrack=nTrack;
-  //  fTrackID=aTrackID;
-  //  fID=aID;
-  //  //  fX=pos.getX()/mm;
-  //  //fY=pos.getY()/mm;
-  //  //fZ=pos.getZ()/mm;
-  //  //fPx=mom.getX()/MeV;
-  //  //fPy=mom.getY()/MeV;
-  //  //fPz=mom.getZ()/MeV;
-  //  fX=pos.getX();
-  //  fY=pos.getY();
-  //  fZ=pos.getZ();
-  //  fPx=mom.getX();
-  //  fPy=mom.getY();
-  //  fPz=mom.getZ();
-  //  fVol=aVol;
-  //  fDist=aDist;
-  //  fKE=aKE;
   fCol = col;
   fRow = row;
   fPID = pid;
+  fEventID = eventid;
   fEdep = edep;
-  fX=pos.getX();
-  fY=pos.getY();
-  fZ=pos.getZ();
+  //  fX=pos.getX();
+  //  fY=pos.getY();
+  //  fZ=pos.getZ();
 
   if (fNtuple) {
     //    G4cout <<"filling ntuple right now!\n";

@@ -100,8 +100,7 @@ void NPSEventAction::EndOfEventAction(const G4Event* event)
   //	 << n_trajectories << G4endl;
   //  getchar();
 
-  // periodic printing
-  //G4int eventID = event->GetEventID();
+  //  G4int eventID = event->GetEventID();
 
   // Hit collection for this event.
 
@@ -121,121 +120,13 @@ void NPSEventAction::EndOfEventAction(const G4Event* event)
       G4int row =(*CC)[i]->GetRow();
       G4int pid =(*CC)[i]->GetPID();
       G4double edep=(*CC)[i]->GetEdep();
-      G4ThreeVector pos=(*CC)[i]->GetPos();
-      fHistoManager->FillNtuple(col, row, pid, edep/MeV, pos);
+      //      G4ThreeVector pos=(*CC)[i]->GetPos();
+      //      fHistoManager->FillNtuple(col, row, pid, edep/MeV, pos);
+      fHistoManager->FillNtuple(col, row, pid, fEvtNo, edep/MeV);
     }
 
     //    getchar();
   }
-
-
-  //---------------------------------------------------------------------------
-
-  // Add the primary vertex for safe keeping
-  //
-  // temporarily remove to get more neutron hits for the event generator
-  //
-  /*
-  G4int eventID = event->GetEventID();
-  fHistoManager->FillNtuple(eventID,
-    0,
-    event->GetPrimaryVertex()->GetPrimary(0)->GetTrackID(),
-    event->GetPrimaryVertex()->GetPrimary(0)->GetPDGcode(),
-    event->GetPrimaryVertex()->GetPosition(),
-    event->GetPrimaryVertex()->GetPrimary(0)->GetMomentum(),-1, -1.,-1.);
-  */
-
-  //
-  // get number of stored trajectories
-  //
-  /*
-  G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer();
-  G4int n_trajectories = 0;
-  if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
-  // periodic printing
-  G4int eventID = event->GetEventID();
-  //
-  G4HCofThisEvent * HCE = event->GetHCofThisEvent();
-  AmagnetTrackerHitsCollection* BPC = 0;
-  if(HCE)
-    {
-      BPC = (AmagnetTrackerHitsCollection*)(HCE->GetHC(fBeamPipeCollID));
-    }
-  
-  if(BPC)
-    {
-      int n_hit = BPC->entries();
-      if (n_hit==0) {
-	AmagnetTrackerHit* newHit= new AmagnetTrackerHit();
-	// Add the primary vertex if the event has otherwise zero hits!
-	//G4cout<<"primary = "<<event->GetPrimaryVertex()->GetPrimary(0)->GetPDGcode()<<G4endl;
-	///	  G4cout << "Adding primary vertex to the output!\n";
-	newHit->SetTrackID  (event->GetPrimaryVertex()->GetPrimary(0)->GetTrackID());
-	newHit->SetID (event->GetPrimaryVertex()->GetPrimary(0)->GetPDGcode());
-	newHit->SetMom (event->GetPrimaryVertex()->GetPrimary(0)->GetMomentum());
-	newHit->SetPos (event->GetPrimaryVertex()->GetPosition());
-	BPC->insert(newHit);
-      }
-      n_hit = BPC->entries();
-      //
-      // Keep the human interested
-      //
-        if ( eventID % fPrintModulo == 0) {
-	  G4cout << ">>> Event: " << eventID  << " Beam Pipe hits: " << n_hit<<" <<<"<<G4endl;
-	  ///   G4cout << "    " << n_trajectories
-	  ///         << " trajectories stored in this event." << G4endl;
-	  // hit collection
-	  ///G4VHitsCollection* hc = event->GetHCofThisEvent()->GetHC(0);
-	  ///G4cout << hc->GetSize() << " hit(s) stored in this event" << G4endl;
-	}
-      ///      G4cout << G4endl;
-      ////G4cout << "Beam Pipe Tracker hits " <<
-      ///	"--------------------------------------------------------------" 
-      ///	     << G4endl;
-      ///G4cout << n_hit << " hit(s) are stored in BeamPipeTrackerHitsCollection." 
-      ///	     << G4endl;
-      // GN Fill ntuple
-      for(int i=0;i<n_hit;i++) {
-	crtID =(*BPC)[i]->GetID();
-	crtTrackID =(*BPC)[i]->GetTrackID();
-	crtPos=(*BPC)[i]->GetPos();
-	crtMom=(*BPC)[i]->GetMom();
-	fHistoManager->FillNtuple(eventID, n_hit, crtTrackID, crtID, crtPos, crtMom);
-	///	    G4cout <<"id = "<<(*BPC)[i]->GetID() << " mom = "<<(*BPC)[i]->GetMom().getX()<<G4endl;
-      }
-    }
-  */
-  
-   //
-  // thx (based on code from Tst33VisEventAction.cc, ahoward
-  ///    for (G4int i=0; i<n_trajectories; i++)  { 
-  ///  G4Trajectory* trj = 0;
-  ///  trj = dynamic_cast<G4Trajectory*>((*trajectoryContainer)[i]);
-  ///  if (trj) {
-  ///	G4cout << "ID = "<<trj->GetPDGEncoding()<<G4endl;
-  ///	G4bool charged=false;
-  ///	charged = std::fabs(trj->GetCharge()) > 0;
-  ///	if (drawFlag == "all") {
-  ///	  DrawTrajectory(*trj);
-  ///	}
-  ///	else if ((drawFlag == "charged")&&(charged)) {
-  ///	  DrawTrajectory(*trj);
-  ///	}
-  ///	else if ((drawFlag == "neutral")&&(!charged)) {
-  ///	  DrawTrajectory(*trj);
-  ///	}
-  ///      }
-  ///  else {
-  ///	G4cerr << " Amagnet::EndOfEventAction: failed to dynamic cast to G4Trajectory!" << G4endl;
-  ///  }
-  ///  }
-  /// G4VHitsCollection* hc = event->GetHCofThisEvent()->GetHC(0);
-  ///G4cout << "    "
-  ///       << hc->GetSize() << " hits stored in this event" << G4endl;
-  /// }
-  //fill histograms
-  //
-  /// fHistoManager->FillHisto(1, fEnergyAbs);
   
 }
 

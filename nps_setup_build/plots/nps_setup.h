@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Feb  3 14:07:40 2016 by ROOT version 5.34/30
+// Fri Feb  5 15:57:15 2016 by ROOT version 5.34/30
 // from TTree rem/rem
 // found on file: nps_setup.root
 //////////////////////////////////////////////////////////
@@ -25,19 +25,15 @@ public :
    Int_t           col;
    Int_t           row;
    Int_t           pid;
+   Int_t           evid;
    Double_t        edep;
-   Double_t        x;
-   Double_t        y;
-   Double_t        z;
 
    // List of branches
    TBranch        *b_col;   //!
    TBranch        *b_row;   //!
    TBranch        *b_pid;   //!
+   TBranch        *b_evid;   //!
    TBranch        *b_Edep;   //!
-   TBranch        *b_x;   //!
-   TBranch        *b_y;   //!
-   TBranch        *b_z;   //!
 
    nps_setup(TTree *tree=0);
    virtual ~nps_setup();
@@ -113,10 +109,8 @@ void nps_setup::Init(TTree *tree)
    fChain->SetBranchAddress("col", &col, &b_col);
    fChain->SetBranchAddress("row", &row, &b_row);
    fChain->SetBranchAddress("pid", &pid, &b_pid);
+   fChain->SetBranchAddress("evid", &evid, &b_evid);
    fChain->SetBranchAddress("edep", &edep, &b_Edep);
-   fChain->SetBranchAddress("x", &x, &b_x);
-   fChain->SetBranchAddress("y", &y, &b_y);
-   fChain->SetBranchAddress("z", &z, &b_z);
    Notify();
 }
 
