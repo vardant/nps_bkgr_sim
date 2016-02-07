@@ -49,7 +49,7 @@ NPSEventAction::NPSEventAction(NPSHistoManager *histo)
     fEdep(0.), fCalorimeterCollID(-1), fEvtNo(-1)
 {
   //  fPrintModulo = 100000;
-  fPrintModulo = 1;
+  fPrintModulo = 100;
 } 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
