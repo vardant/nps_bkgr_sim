@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation=
+      "/home/vardan/Downloads/GDML_3_1_3/schema/gdml.xsd">
+
+ <define>
+
+   <!-- Main part of yoke, sizes taken from Bogdan's July 30 presentation -->
+   <quantity name="m1x" type="length" value="-0.882353" unit="cm"/>
+   <quantity name="m1y" type="length" value="-47.2141" unit="cm"/>
+   <quantity name="m2x" type="length" value="99.1176" unit="cm"/>
+   <quantity name="m2y" type="length" value="-47.2141" unit="cm"/>
+   <quantity name="m3x" type="length" value="99.1176" unit="cm"/>
+   <quantity name="m3y" type="length" value="46.9208" unit="cm"/>
+   <quantity name="m4x" type="length" value="-0.882353" unit="cm"/>
+   <quantity name="m4y" type="length" value="32.8446" unit="cm"/>
+   <quantity name="mdz" type="length" value="80."     unit="cm"/>
+
+   <!-- Extention 1 of yoke, sizes taken from Bogdan's July 30 presentation -->
+   <quantity name="e11x" type="length" value="-15.5882" unit="cm"/>
+   <quantity name="e11y" type="length" value="17.3021" unit="cm"/>
+   <quantity name="e12x" type="length" value="-1.17647" unit="cm"/>
+   <quantity name="e12y" type="length" value="17.3021" unit="cm"/>
+   <quantity name="e13x" type="length" value="-0.882353" unit="cm"/>
+   <quantity name="e13y" type="length" value="32.8446" unit="cm"/>
+   <quantity name="e14x" type="length" value="-15.5882" unit="cm"/>
+   <quantity name="e14y" type="length" value="30.4985" unit="cm"/>
+   <quantity name="e1dz" type="length" value="70."     unit="cm"/>
+
+   <!-- Extention 2 of yoke, sizes taken from Bogdan's July 30 presentation -->
+   <quantity name="e21x" type="length" value="-25.5882" unit="cm"/>
+   <quantity name="e21y" type="length" value="-37.5367" unit="cm"/>
+   <quantity name="e22x" type="length" value="-15.5882" unit="cm"/>
+   <quantity name="e22y" type="length" value="-37.5367" unit="cm"/>
+   <quantity name="e23x" type="length" value="-15.5882" unit="cm"/>
+   <quantity name="e23y" type="length" value="30.4985" unit="cm"/>
+   <quantity name="e24x" type="length" value="-25.8824" unit="cm"/>
+   <quantity name="e24y" type="length" value="29.0323" unit="cm"/>
+   <quantity name="e2dz" type="length" value="70."     unit="cm"/>
+
+   <!-- Extension piece 2 bore hight and width. The width is just a guess. -->
+   <quantity name="e2bhight" type="length" value="40." unit="cm"/>
+   <quantity name="e2bwidth" type="length" value="20." unit="cm"/>
+   <quantity name="e2bdepth" type="length" value="e22x-e21x" unit="cm"/>
+   <position name="e2bpos" x="0" y="e12y-e2bwidth/2." z="0"/>
+
+   <!-- Yoke bore. -->
+   <quantity name="mbhight" type="length" value="80." unit="cm"/>
+   <quantity name="mbwidth" type="length" value="30." unit="cm"/>
+   <quantity name="mbdepth" type="length" value="m2x-m1x" unit="cm"/>
+   <position name="mbpos" x="0" y="e12y-mbwidth/2." z="0"/>
+
+   <!-- Forward piece, sizes taken from Bogdan's July 30 presentation -->
+   <quantity name="f1x" type="length" value="-43.7059" unit="cm"/>
+   <quantity name="f1y" type="length" value="-47.3314" unit="cm"/>
+   <quantity name="f2x" type="length" value="-35.8824" unit="cm"/>
+   <quantity name="f2y" type="length" value="-47.3314" unit="cm"/>
+   <quantity name="f3x" type="length" value="-35.8824" unit="cm"/>
+   <quantity name="f3y" type="length" value="27.1554" unit="cm"/>
+   <quantity name="f4x" type="length" value="-43.7059" unit="cm"/>
+   <quantity name="f4y" type="length" value="26.5689" unit="cm"/>
+   <quantity name="fdz" type="length" value="70."     unit="cm"/>
+
+   <!-- Forward piece bore. -->
+   <quantity name="fbhight" type="length" value="33.1" unit="cm"/>
+   <quantity name="fbwidth" type="length" value="17.3" unit="cm"/>
+   <!-- quantity name="fbdepth" type="length" value="f2x-f1x" unit="cm"/ -->
+   <!--                                              ??? -->
+   <quantity name="fbdepth" type="length" value="(f2x-f1x)*2" unit="cm"/>
+   <position name="fbpos" x="0" y="fbwidth/2." z="0"/>
+
+   <!-- Main coil -->
+   <quantity name="mclength" type="length" value="100." unit="cm"/>
+   <quantity name="mchight" type="length" value="40." unit="cm"/>
+   <quantity name="mcthick" type="length" value="10." unit="cm"/>
+   <quantity name="mcwidth" type="length" value="30." unit="cm"/>
+
+   <position name="mctoppos" x="0" y="(mchight+mcthick)/2." z="0"/>
+   <position name="mcbotpos" x="0" y="-(mchight+mcthick)/2." z="0"/>
+   <position name="mcleftpos" x="0" y="0" z="-(mclength+mcthick)/2."/>
+   <position name="mcrightpos" x="0" y="0" z="(mclength+mcthick)/2."/>
+
+   <position name="mcarcpos1" x="0" y="mchight/2" z="-mclength/2"/>
+   <position name="mcarcpos2" x="0" y="mchight/2" z="mclength/2"/>
+   <position name="mcarcpos3" x="0" y="-mchight/2" z="mclength/2"/>
+   <position name="mcarcpos4" x="0" y="-mchight/2" z="-mclength/2"/>
+
+   <position name="mtopcoilpos" x="0" y="mdz-mchight/2" z="(m1x+m2x)/2"/>
+   <position name="mbotcoilpos" x="0" y="-mdz+mchight/2" z="(m1x+m2x)/2"/>
+
+   <quantity name="xextent" type="length" value="200." unit="cm"/>
+   <quantity name="zextent" type="length" value="200." unit="cm"/>
+
+   <rotation name="roty90" x="0" y="90" z="0" unit="deg"/>
+   <rotation name="rotym90" x="0" y="-90" z="0" unit="deg"/>
+   <rotation name="rotx180ym90" x="180" y="-90" z="0" unit="deg"/>
+   <rotation name="rotx180y90" x="180" y="90." z="0" unit="deg"/>
+   <rotation name="rotxz" x="-90" y="0" z="-90" unit="deg"/>
+
+   <position name="center" x="0" y="0" z="0"/>
+   <rotation name="identity" x="0" y="0" z="0"/>
+
+ </define>
+
+ <materials>
+
+   <element name="Oxygen" formula="O" Z="8."> <atom value="16.0"/> </element>
+   <element name="Nitrogen" formula="N" Z="7."> <atom value="14.01"/> </element>
+   <element name="Iron" formula="Fe" Z="26."> <atom value="55.845"/> </element>
+   <element name="Cupper" formula="Cu" Z="29."> <atom value="63.546"/>
+   </element>
+
+   <material name="Steel">
+     <D value="7.874" unit="mg/cm3"/>
+     <fraction n="1.0" ref="Iron"/>
+   </material>
+
+   <material name="CuAlloy">
+     <D value="8.960" unit="mg/cm3"/>
+     <fraction n="1.0" ref="Cupper"/>
+   </material>
+
+   <material name="Air">
+     <D value="1.290" unit="mg/cm3"/>
+     <fraction n="0.7" ref="Nitrogen"/>
+     <fraction n="0.3" ref="Oxygen"/>
+   </material>
+
+ </materials>
+
+ <solids> 
+   <box name="WorldBox" x="xextent" y="xextent" z="zextent"/>
+
+   <!-- Yoke, main part. -->
+
+   <box name="yv0bore" x="mbdepth" y="mbwidth" z="mbhight"/>
+
+   <arb8 name = "yv0"
+	 v1x="m1x" v1y="m1y"
+	 v2x="m2x" v2y="m2y"
+	 v3x="m3x" v3y="m3y"
+	 v4x="m4x" v4y="m4y"
+	 v5x="m1x" v5y="m1y"
+	 v6x="m2x" v6y="m2y"
+	 v7x="m3x" v7y="m3y"
+	 v8x="m4x" v8y="m4y"
+	 dz="mdz"/>
+
+   <subtraction name="yokev0">
+     <first ref="yv0"/> <second ref="yv0bore"/>
+     <positionref ref="mbpos"/>
+     <rotationref ref="identity"/>
+   </subtraction>
+
+   <!-- Yoke extension -->
+
+   <arb8 name = "yokev1"
+	 v1x="e11x" v1y="e11y"
+	 v2x="e12x" v2y="e12y"
+	 v3x="e13x" v3y="e13y"
+	 v4x="e14x" v4y="e14y"
+	 v5x="e11x" v5y="e11y"
+	 v6x="e12x" v6y="e12y"
+	 v7x="e13x" v7y="e13y"
+	 v8x="e14x" v8y="e14y"
+	 dz="e1dz"/>
+
+   <arb8 name = "yv2"
+	 v1x="e21x" v1y="e21y"
+	 v2x="e22x" v2y="e22y"
+	 v3x="e23x" v3y="e23y"
+	 v4x="e24x" v4y="e24y"
+	 v5x="e21x" v5y="e21y"
+	 v6x="e22x" v6y="e22y"
+	 v7x="e23x" v7y="e23y"
+	 v8x="e24x" v8y="e24y"
+	 dz="e2dz"/>
+
+   <box name="yv2bore" x="e2bdepth" y="e2bwidth" z="e2bhight"/>
+
+   <subtraction name="yokev2">
+     <first ref="yv2"/> <second ref="yv2bore"/>
+     <positionref ref="e2bpos"/>
+     <rotationref ref="identity"/>
+   </subtraction>
+
+   <!-- Yoke assembling -->
+
+   <union name="u1">
+     <first ref="yokev0"/> <second ref="yokev1"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="u2">
+     <first ref="u1"/> <second ref="yokev2"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <!-- Forward piece. -->
+
+   <arb8 name = "fv"
+	 v1x="f1x" v1y="f1y"
+	 v2x="f2x" v2y="f2y"
+	 v3x="f3x" v3y="f3y"
+	 v4x="f4x" v4y="f4y"
+	 v5x="f1x" v5y="f1y"
+	 v6x="f2x" v6y="f2y"
+	 v7x="f3x" v7y="f3y"
+	 v8x="f4x" v8y="f4y"
+	 dz="fdz"/>
+
+   <box name="fbore" x="fbdepth" y="fbwidth" z="fbhight"/>
+
+   <subtraction name="frw">
+     <first ref="fv"/> <second ref="fbore"/>
+     <positionref ref="fbpos"/>
+     <rotationref ref="identity"/>
+   </subtraction>
+
+   <!-- Main coil -->
+
+   <box name="mcxplate" x="mcwidth" y="mcthick" z="mclength"/>
+   <box name="mcyplate" x="mcwidth" y="mchight" z="mcthick"/>
+   <tube name="mcarc" rmax="mcthick" z="mcwidth" deltaphi="90" aunit="deg"/>
+   <box name="mcinbox" x="mcwidth" y="mchight" z="mclength"/>
+
+   <union name="mcu1">
+     <first ref="mcinbox"/> <second ref="mcxplate"/>
+     <positionref ref="mctoppos"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="mcu2">
+     <first ref="mcu1"/> <second ref="mcyplate"/>
+     <positionref ref="mcrightpos"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="mcu3">
+     <first ref="mcu2"/> <second ref="mcxplate"/>
+     <positionref ref="mcbotpos"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="mcu4">
+     <first ref="mcu3"/> <second ref="mcyplate"/>
+     <positionref ref="mcleftpos"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="mcu5">
+     <first ref="mcu4"/> <second ref="mcarc"/>
+     <positionref ref="mcarcpos1"/>
+     <rotationref ref="roty90"/>
+   </union>
+
+   <union name="mcu6">
+     <first ref="mcu5"/> <second ref="mcarc"/>
+     <positionref ref="mcarcpos2"/>
+     <rotationref ref="rotym90"/>
+   </union>
+
+   <union name="mcu7">
+     <first ref="mcu6"/> <second ref="mcarc"/>
+     <positionref ref="mcarcpos3"/>
+     <rotationref ref="rotx180ym90"/>
+   </union>
+
+   <union name="mcu8">
+     <first ref="mcu7"/> <second ref="mcarc"/>
+     <positionref ref="mcarcpos4"/>
+     <rotationref ref="rotx180y90"/>
+   </union>
+
+   <subtraction name="mcoilvol">
+     <first ref="mcu8"/> <second ref="mcinbox"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </subtraction>
+
+ </solids>
+
+ <structure>  
+
+   <volume name="Yoke">
+     <materialref ref="Steel"/>
+     <solidref ref="u2"/>
+     <auxiliary auxtype="Color" auxvalue="green" />
+   </volume>
+  
+   <volume name="Forward">
+     <materialref ref="Steel"/>
+     <solidref ref="frw"/>
+     <auxiliary auxtype="Color" auxvalue="green" />
+   </volume>
+  
+   <volume name="MCoil">
+     <materialref ref="CuAlloy"/>
+     <solidref ref="mcoilvol"/>
+     <auxiliary auxtype="Color" auxvalue="red" />
+   </volume>
+  
+  <volume name="World">
+   <materialref ref="Air"/>
+   <solidref ref="WorldBox"/>
+
+   <physvol>
+     <volumeref ref="Yoke"/>
+     <positionref ref="center"/>
+     <rotationref ref="rotxz"/>
+   </physvol> 
+
+   <!-- physvol -->
+     <!-- volumeref ref="Forward"/ -->
+     <!-- positionref ref="center"/ -->
+     <!-- rotationref ref="rotxz"/ -->
+   <!-- /physvol --> 
+
+   <physvol>
+     <volumeref ref="MCoil"/>
+     <positionref ref="mtopcoilpos"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+   <physvol>
+     <volumeref ref="MCoil"/>
+     <positionref ref="mbotcoilpos"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+  </volume>
+
+ </structure>
+
+ <setup name="Default" version="1.0">
+   <world ref="World"/>
+   <!-- world ref="MagnetAssembly"/ -->
+ </setup>
+
+</gdml>
