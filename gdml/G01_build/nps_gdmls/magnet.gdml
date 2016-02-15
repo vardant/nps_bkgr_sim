@@ -62,7 +62,7 @@
    <quantity name="fdz" type="length" value="70."     unit="cm"/>
 
    <!-- Forward piece bore. -->
-   <quantity name="fbhight" type="length" value="33.1" unit="cm"/>
+   <quantity name="fbhight" type="length" value="33.6" unit="cm"/>
    <quantity name="fbwidth" type="length" value="17.3" unit="cm"/>
    <!-- quantity name="fbdepth" type="length" value="f2x-f1x" unit="cm"/ -->
    <!--                                              ??? -->
@@ -85,8 +85,31 @@
    <position name="mcarcpos3" x="0" y="-mchight/2" z="mclength/2"/>
    <position name="mcarcpos4" x="0" y="-mchight/2" z="-mclength/2"/>
 
-   <position name="mtopcoilpos" x="0" y="mdz-mchight/2" z="(m1x+m2x)/2"/>
-   <position name="mbotcoilpos" x="0" y="-mdz+mchight/2" z="(m1x+m2x)/2"/>
+   <position name="mtopcoilpos" x="-e12y+mbwidth/2." y="mdz-mchight/2"
+	     z="(m1x+m2x)/2"/>
+   <position name="mbotcoilpos" x="-e12y+mbwidth/2." y="-mdz+mchight/2"
+	     z="(m1x+m2x)/2"/>
+
+   <!-- Forward coil -->
+   <quantity name="fclength" type="length" value="7.8235" unit="cm"/>
+   <quantity name="fchight" type="length" value="53.2" unit="cm"/>
+   <quantity name="fcthick" type="length" value="2.9" unit="cm"/>
+   <quantity name="fcwidth" type="length" value="17.3" unit="cm"/>
+
+   <position name="fctoppos" x="0" y="(fchight+fcthick)/2." z="0"/>
+   <position name="fcbotpos" x="0" y="-(fchight+fcthick)/2." z="0"/>
+   <position name="fcleftpos" x="0" y="0" z="-(fclength+fcthick)/2."/>
+   <position name="fcrightpos" x="0" y="0" z="(fclength+fcthick)/2."/>
+
+   <position name="fcarcpos1" x="0" y="fchight/2" z="-fclength/2"/>
+   <position name="fcarcpos2" x="0" y="fchight/2" z="fclength/2"/>
+   <position name="fcarcpos3" x="0" y="-fchight/2" z="fclength/2"/>
+   <position name="fcarcpos4" x="0" y="-fchight/2" z="-fclength/2"/>
+
+   <position name="ftopcoilpos" x="-fbwidth/2" y="fdz-fchight/2"
+	     z="(f1x+f2x)/2"/>
+   <position name="fbotcoilpos" x="-fbwidth/2" y="-fdz+fchight/2"
+	     z="(f1x+f2x)/2"/>
 
    <quantity name="xextent" type="length" value="200." unit="cm"/>
    <quantity name="zextent" type="length" value="200." unit="cm"/>
@@ -280,6 +303,67 @@
      <rotationref ref="identity"/>
    </subtraction>
 
+   <!-- Forward coil -->
+
+   <box name="fcxplate" x="fcwidth" y="fcthick" z="fclength"/>
+   <box name="fcyplate" x="fcwidth" y="fchight" z="fcthick"/>
+   <tube name="fcarc" rmax="fcthick" z="fcwidth" deltaphi="90" aunit="deg"/>
+   <box name="fcinbox" x="fcwidth" y="fchight" z="fclength"/>
+
+   <union name="fcu1">
+     <first ref="fcinbox"/> <second ref="fcxplate"/>
+     <positionref ref="fctoppos"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="fcu2">
+     <first ref="fcu1"/> <second ref="fcyplate"/>
+     <positionref ref="fcrightpos"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="fcu3">
+     <first ref="fcu2"/> <second ref="fcxplate"/>
+     <positionref ref="fcbotpos"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="fcu4">
+     <first ref="fcu3"/> <second ref="fcyplate"/>
+     <positionref ref="fcleftpos"/>
+     <rotationref ref="identity"/>
+   </union>
+
+   <union name="fcu5">
+     <first ref="fcu4"/> <second ref="fcarc"/>
+     <positionref ref="fcarcpos1"/>
+     <rotationref ref="roty90"/>
+   </union>
+
+   <union name="fcu6">
+     <first ref="fcu5"/> <second ref="fcarc"/>
+     <positionref ref="fcarcpos2"/>
+     <rotationref ref="rotym90"/>
+   </union>
+
+   <union name="fcu7">
+     <first ref="fcu6"/> <second ref="fcarc"/>
+     <positionref ref="fcarcpos3"/>
+     <rotationref ref="rotx180ym90"/>
+   </union>
+
+   <union name="fcu8">
+     <first ref="fcu7"/> <second ref="fcarc"/>
+     <positionref ref="fcarcpos4"/>
+     <rotationref ref="rotx180y90"/>
+   </union>
+
+   <subtraction name="fcoilvol">
+     <first ref="fcu8"/> <second ref="fcinbox"/>
+     <positionref ref="center"/>
+     <rotationref ref="identity"/>
+   </subtraction>
+
  </solids>
 
  <structure>  
@@ -301,6 +385,12 @@
      <solidref ref="mcoilvol"/>
      <auxiliary auxtype="Color" auxvalue="red" />
    </volume>
+
+   <volume name="FCoil">
+     <materialref ref="CuAlloy"/>
+     <solidref ref="fcoilvol"/>
+     <auxiliary auxtype="Color" auxvalue="red" />
+   </volume>
   
   <volume name="World">
    <materialref ref="Air"/>
@@ -312,11 +402,11 @@
      <rotationref ref="rotxz"/>
    </physvol> 
 
-   <!-- physvol -->
-     <!-- volumeref ref="Forward"/ -->
-     <!-- positionref ref="center"/ -->
-     <!-- rotationref ref="rotxz"/ -->
-   <!-- /physvol --> 
+   <physvol>
+     <volumeref ref="Forward"/>
+     <positionref ref="center"/>
+     <rotationref ref="rotxz"/>
+   </physvol> 
 
    <physvol>
      <volumeref ref="MCoil"/>
@@ -327,6 +417,18 @@
    <physvol>
      <volumeref ref="MCoil"/>
      <positionref ref="mbotcoilpos"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+   <physvol>
+     <volumeref ref="FCoil"/>
+     <positionref ref="ftopcoilpos"/>
+     <rotationref ref="identity"/>
+   </physvol> 
+
+   <physvol>
+     <volumeref ref="FCoil"/>
+     <positionref ref="fbotcoilpos"/>
      <rotationref ref="identity"/>
    </physvol> 
 
