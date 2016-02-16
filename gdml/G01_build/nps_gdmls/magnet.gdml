@@ -6,68 +6,70 @@
  <define>
 
    <!-- Main part of yoke, sizes taken from Bogdan's July 30 presentation -->
-   <quantity name="m1x" type="length" value="-0.882353" unit="cm"/>
-   <quantity name="m1y" type="length" value="-47.2141" unit="cm"/>
-   <quantity name="m2x" type="length" value="99.1176" unit="cm"/>
-   <quantity name="m2y" type="length" value="-47.2141" unit="cm"/>
-   <quantity name="m3x" type="length" value="99.1176" unit="cm"/>
-   <quantity name="m3y" type="length" value="46.9208" unit="cm"/>
-   <quantity name="m4x" type="length" value="-0.882353" unit="cm"/>
-   <quantity name="m4y" type="length" value="32.8446" unit="cm"/>
+   <quantity name="m1x" type="length" value="-50." unit="cm"/>
+   <quantity name="m1y" type="length" value="-49.50" unit="cm"/>
+   <quantity name="m2x" type="length" value="50." unit="cm"/>
+   <quantity name="m2y" type="length" value="-49.50" unit="cm"/>
+   <quantity name="m3x" type="length" value="50." unit="cm"/>
+   <quantity name="m3y" type="length" value="44.62" unit="cm"/>
+   <quantity name="m4x" type="length" value="-50." unit="cm"/>
+   <quantity name="m4y" type="length" value="30.54" unit="cm"/>
    <quantity name="mdz" type="length" value="80."     unit="cm"/>
 
    <!-- Extention 1 of yoke, sizes taken from Bogdan's July 30 presentation -->
-   <quantity name="e11x" type="length" value="-15.5882" unit="cm"/>
-   <quantity name="e11y" type="length" value="17.3021" unit="cm"/>
-   <quantity name="e12x" type="length" value="-1.17647" unit="cm"/>
-   <quantity name="e12y" type="length" value="17.3021" unit="cm"/>
-   <quantity name="e13x" type="length" value="-0.882353" unit="cm"/>
-   <quantity name="e13y" type="length" value="32.8446" unit="cm"/>
-   <quantity name="e14x" type="length" value="-15.5882" unit="cm"/>
-   <quantity name="e14y" type="length" value="30.4985" unit="cm"/>
+   <quantity name="e11x" type="length" value="-64.71" unit="cm"/>
+   <quantity name="e11y" type="length" value="15." unit="cm"/>
+   <quantity name="e12x" type="length" value="-50." unit="cm"/>
+   <quantity name="e12y" type="length" value="15." unit="cm"/>
+   <quantity name="e13x" type="length" value="-50." unit="cm"/>
+   <quantity name="e13y" type="length" value="30.54" unit="cm"/>
+   <quantity name="e14x" type="length" value="-64.71" unit="cm"/>
+   <quantity name="e14y" type="length" value="28.20" unit="cm"/>
    <quantity name="e1dz" type="length" value="70."     unit="cm"/>
 
    <!-- Extention 2 of yoke, sizes taken from Bogdan's July 30 presentation -->
-   <quantity name="e21x" type="length" value="-25.5882" unit="cm"/>
-   <quantity name="e21y" type="length" value="-37.5367" unit="cm"/>
-   <quantity name="e22x" type="length" value="-15.5882" unit="cm"/>
-   <quantity name="e22y" type="length" value="-37.5367" unit="cm"/>
-   <quantity name="e23x" type="length" value="-15.5882" unit="cm"/>
-   <quantity name="e23y" type="length" value="30.4985" unit="cm"/>
-   <quantity name="e24x" type="length" value="-25.8824" unit="cm"/>
-   <quantity name="e24y" type="length" value="29.0323" unit="cm"/>
+   <quantity name="e21x" type="length" value="-74.71" unit="cm"/>
+   <quantity name="e21y" type="length" value="-39.84" unit="cm"/>
+   <quantity name="e22x" type="length" value="-64.71" unit="cm"/>
+   <quantity name="e22y" type="length" value="-39.84" unit="cm"/>
+   <quantity name="e23x" type="length" value="-64.71" unit="cm"/>
+   <quantity name="e23y" type="length" value="28.20" unit="cm"/>
+   <quantity name="e24x" type="length" value="-74.71" unit="cm"/>
+   <quantity name="e24y" type="length" value="26.73" unit="cm"/>
    <quantity name="e2dz" type="length" value="70."     unit="cm"/>
 
    <!-- Extension piece 2 bore hight and width. The width is just a guess. -->
    <quantity name="e2bhight" type="length" value="40." unit="cm"/>
    <quantity name="e2bwidth" type="length" value="20." unit="cm"/>
-   <quantity name="e2bdepth" type="length" value="e22x-e21x" unit="cm"/>
-   <position name="e2bpos" x="0" y="e12y-e2bwidth/2." z="0"/>
+   <!-- quantity name="e2bdepth" type="length" value="e22x-e21x" unit="cm"/ -->
+   <quantity name="e2bdepth" type="length" value="10.05" unit="cm"/>
+   <!-- position name="e2bpos" x="0" y="e12y-e2bwidth/2." z="0"/ -->
+   <position name="e2bpos" x="-69.71" y="5" z="0" unit="cm"/>
 
    <!-- Yoke bore. -->
    <quantity name="mbhight" type="length" value="80." unit="cm"/>
    <quantity name="mbwidth" type="length" value="30." unit="cm"/>
    <quantity name="mbdepth" type="length" value="m2x-m1x" unit="cm"/>
-   <position name="mbpos" x="0" y="e12y-mbwidth/2." z="0"/>
+   <!-- position name="mbpos" x="0" y="e12y-mbwidth/2." z="0"/ -->
 
    <!-- Forward piece, sizes taken from Bogdan's July 30 presentation -->
-   <quantity name="f1x" type="length" value="-43.7059" unit="cm"/>
-   <quantity name="f1y" type="length" value="-47.3314" unit="cm"/>
-   <quantity name="f2x" type="length" value="-35.8824" unit="cm"/>
-   <quantity name="f2y" type="length" value="-47.3314" unit="cm"/>
-   <quantity name="f3x" type="length" value="-35.8824" unit="cm"/>
-   <quantity name="f3y" type="length" value="27.1554" unit="cm"/>
-   <quantity name="f4x" type="length" value="-43.7059" unit="cm"/>
-   <quantity name="f4y" type="length" value="26.5689" unit="cm"/>
+   <quantity name="f1x" type="length" value="-92.83" unit="cm"/>
+   <quantity name="f1y" type="length" value="-45.03" unit="cm"/>
+   <quantity name="f2x" type="length" value="-85.00" unit="cm"/>
+   <quantity name="f2y" type="length" value="-45.03" unit="cm"/>
+   <quantity name="f3x" type="length" value="-85.00" unit="cm"/>
+   <quantity name="f3y" type="length" value="25.5" unit="cm"/>
+   <quantity name="f4x" type="length" value="-92.83" unit="cm"/>
+   <quantity name="f4y" type="length" value="24.27" unit="cm"/>
    <quantity name="fdz" type="length" value="70."     unit="cm"/>
 
    <!-- Forward piece bore. -->
    <quantity name="fbhight" type="length" value="33.6" unit="cm"/>
    <quantity name="fbwidth" type="length" value="17.3" unit="cm"/>
    <!-- quantity name="fbdepth" type="length" value="f2x-f1x" unit="cm"/ -->
-   <!--                                              ??? -->
-   <quantity name="fbdepth" type="length" value="(f2x-f1x)*2" unit="cm"/>
-   <position name="fbpos" x="0" y="fbwidth/2." z="0"/>
+   <quantity name="fbdepth" type="length" value="7.835" unit="cm"/>
+   <!-- position name="fbpos" x="(f1x+f2x)/2" y="(mbwidth-fbwidth)/2."z="0"/ -->
+   <position name="fbpos" x="-88.915" y="6.35" z="0" unit="cm"/>
 
    <!-- Main coil -->
    <quantity name="mclength" type="length" value="100." unit="cm"/>
@@ -106,9 +108,9 @@
    <position name="fcarcpos3" x="0" y="-fchight/2" z="fclength/2"/>
    <position name="fcarcpos4" x="0" y="-fchight/2" z="-fclength/2"/>
 
-   <position name="ftopcoilpos" x="-fbwidth/2" y="fdz-fchight/2"
+   <position name="ftopcoilpos" x="-(mbwidth-fbwidth)/2" y="fdz-fchight/2"
 	     z="(f1x+f2x)/2"/>
-   <position name="fbotcoilpos" x="-fbwidth/2" y="-fdz+fchight/2"
+   <position name="fbotcoilpos" x="-(mbwidth-fbwidth)/2" y="-fdz+fchight/2"
 	     z="(f1x+f2x)/2"/>
 
    <quantity name="xextent" type="length" value="200." unit="cm"/>
@@ -122,6 +124,9 @@
 
    <position name="center" x="0" y="0" z="0"/>
    <rotation name="identity" x="0" y="0" z="0"/>
+
+   <!-- Position at center of the magnet's bore -->
+   <!-- position name="magnet_center" x="(m1x+m2x)/2" y="fbwidth-mbwidth/2" z="0"/ -->
 
  </define>
 
@@ -171,7 +176,7 @@
 
    <subtraction name="yokev0">
      <first ref="yv0"/> <second ref="yv0bore"/>
-     <positionref ref="mbpos"/>
+     <positionref ref="center"/>
      <rotationref ref="identity"/>
    </subtraction>
 
