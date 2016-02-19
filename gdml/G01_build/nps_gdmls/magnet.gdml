@@ -157,7 +157,7 @@
  </materials>
 
  <solids> 
-   <box name="WorldBox" x="xextent" y="xextent" z="zextent"/>
+   <box name="MagnetBox" x="xextent" y="xextent" z="zextent"/>
 
    <!-- Yoke, main part. -->
 
@@ -397,9 +397,10 @@
      <auxiliary auxtype="Color" auxvalue="red" />
    </volume>
   
-  <volume name="World">
+  <!-- volume name="World" -->
+  <volume name="MagnetAssembly">
    <materialref ref="Air"/>
-   <solidref ref="WorldBox"/>
+   <solidref ref="MagnetBox"/>
 
    <physvol>
      <volumeref ref="Yoke"/>
@@ -442,8 +443,8 @@
  </structure>
 
  <setup name="Default" version="1.0">
-   <world ref="World"/>
-   <!-- world ref="MagnetAssembly"/ -->
+   <!-- world ref="World"/ -->
+   <world ref="MagnetAssembly"/>
  </setup>
 
 </gdml>
